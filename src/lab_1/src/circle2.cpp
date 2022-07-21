@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     double z_c;
     double radius;
     std::string plane;
-    n.getParam("/circle/side", radius);
+    n.getParam("/circle/radius", radius);
     n.getParam("/circle/x_c", x_c);
     n.getParam("/circle/y_c", y_c);
     n.getParam("/circle/z_c", z_c);
@@ -55,24 +55,12 @@ int main(int argc, char **argv)
             pose1.orientation.z = 0.0;
             pose1.orientation.w = 1.0;
         }
-        pos_vect.push_back(z_c);
-        pos_vect.push_back(y_c + side/2);
-        pos_vect.push_back(x_c - side/2);
-        pos_vect.push_back(z_c);
-        pos_vect.push_back(y_c - side/2);
-        pos_vect.push_back(x_c - side/2);
-        pos_vect.push_back(z_c);
-        pos_vect.push_back(y_c - side/2);
-        pos_vect.push_back(x_c + side/2);
-        pos_vect.push_back(z_c);
-        pos_vect.push_back(y_c + side/2);
-        pos_vect.push_back(x_c + side/2);
         
     }
     else if (plane == "xz" || plane == "zx"){
-        pose1.position.x = x_c - side/2;
+        pose1.position.x = x_c + radius;
         pose1.position.y = y_c;
-        pose1.position.z = z_c + side/2;
+        pose1.position.z = z_c;
         if (y_c >= 0.0){
             pose1.orientation.x = -0.707;
             pose1.orientation.y = 0.0;
@@ -85,18 +73,6 @@ int main(int argc, char **argv)
             pose1.orientation.z = -0.707;
             pose1.orientation.w = 0.0;
         }
-        pos_vect.push_back(z_c + side/2);
-        pos_vect.push_back(y_c);
-        pos_vect.push_back(x_c - side/2);
-        pos_vect.push_back(z_c - side/2);
-        pos_vect.push_back(y_c);
-        pos_vect.push_back(x_c - side/2);
-        pos_vect.push_back(z_c - side/2);
-        pos_vect.push_back(y_c);
-        pos_vect.push_back(x_c + side/2);
-        pos_vect.push_back(z_c + side/2);
-        pos_vect.push_back(y_c);
-        pos_vect.push_back(x_c + side/2);
     }
     else if (plane == "yz" || plane == "zy"){
         pose1.position.x = x_c;
@@ -114,18 +90,6 @@ int main(int argc, char **argv)
             pose1.orientation.z = 0.5;
             pose1.orientation.w = 0.5;
         }
-        pos_vect.push_back(z_c + side/2);
-        pos_vect.push_back(y_c + side/2);
-        pos_vect.push_back(x_c);
-        pos_vect.push_back(z_c - side/2);
-        pos_vect.push_back(y_c + side/2);
-        pos_vect.push_back(x_c);
-        pos_vect.push_back(z_c - side/2);
-        pos_vect.push_back(y_c - side/2);
-        pos_vect.push_back(x_c);
-        pos_vect.push_back(z_c + side/2);
-        pos_vect.push_back(y_c - side/2);
-        pos_vect.push_back(x_c);
     }
 
     std::string reference_frame = "base_link_inertia";
@@ -135,8 +99,6 @@ int main(int argc, char **argv)
     std::string end_effector_name = "moveit";
     bool plan_success;
     plan_success = ArmController::planToPoseTarget(planning_options,arm_move_group,pose1,reference_frame,plan_pose1,end_effector_name);
-
-    
 
     if(plan_success){
         ROS_INFO("pose 1 plan succeeded");
@@ -156,8 +118,9 @@ int main(int argc, char **argv)
         std::vector< geometry_msgs::Pose > vect;
         double radius = 0.1;
 
-        double Xc = 0;
+        double Xc = 0;   //this needs to be in the if loop top 117-122
         double Zc = 1.35;
+        std::stack<geometry_msgs::Pose> waypoints;
 
         for(double angle = 0; angle <= 2 * PI; angle+=0.1){
             geometry_msgs::Pose poses = arm_move_group.getCurrentPose().pose;
@@ -170,9 +133,16 @@ int main(int argc, char **argv)
             geometry_msgs::Pose start_pose1 = arm_move_group.getCurrentPose().pose;
             geometry_msgs::Pose nextpose = vect.back();
             vect.pop_back();
-            ArmController::planCartesianPath(start_pose1, nextpose, arm_move_group);
+            waypoints_intermediate = void ArmController::InverseKinematicSolver(start_pose1, nextpose, arm_move_group);
+            while(!waypoints_intermediate.empty()){
+                waypoints.push(waypoints_intermediate.back());
+            }
         }
-
+        std::vect<geometry_msgs::Pose> waypoint_vector
+        while(!waypoints.empty()){
+            waypoint_vector.push_back(waypoints.top())
+            waypoints.pop()
+        }
+        ArmController::planCartesianPath(arm_move_group,waypoint_vector);
     } 
-    
 }
