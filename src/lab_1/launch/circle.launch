@@ -1,8 +1,8 @@
 <launch>
     <arg name="radius" default="0.1" />
-    <arg name="x_c" default="0.25" />
-    <arg name="y_c" default="0.2" />
-    <arg name="z_c" default="1.1" />
+    <arg name="x_c" default="0" />
+    <arg name="y_c" default="0.3" />
+    <arg name="z_c" default="1.45" />
     <arg name="plane" default="xz" />
 
     <node name="circle" pkg="lab_1" type="circle" output="screen">
