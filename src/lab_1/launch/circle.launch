@@ -6,7 +6,7 @@
     <arg name="plane" default="xz" />
 
     <node name="circle" pkg="lab_1" type="circle" output="screen">
-        <param name="radius" value="$(arg side)" />
+        <param name="radius" value="$(arg radius)" />
         <param name="x_c" value="$(arg x_c)" />
         <param name="y_c" value="$(arg y_c)" />
         <param name="z_c" value="$(arg z_c)" />

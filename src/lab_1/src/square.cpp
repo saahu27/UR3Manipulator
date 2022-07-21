@@ -36,7 +36,6 @@ int main(int argc, char **argv)
     moveit::planning_interface::MoveGroupInterface arm_move_group("manipulator");
 
     int flag = 0;
-    std::vector<double> pos_vect;
 
     geometry_msgs::Pose pose1;
     if (plane == "xy" || plane == "yx"){
@@ -55,18 +54,6 @@ int main(int argc, char **argv)
             pose1.orientation.z = 0.0;
             pose1.orientation.w = 1.0;
         }
-        pos_vect.push_back(z_c);
-        pos_vect.push_back(y_c + side/2);
-        pos_vect.push_back(x_c - side/2);
-        pos_vect.push_back(z_c);
-        pos_vect.push_back(y_c - side/2);
-        pos_vect.push_back(x_c - side/2);
-        pos_vect.push_back(z_c);
-        pos_vect.push_back(y_c - side/2);
-        pos_vect.push_back(x_c + side/2);
-        pos_vect.push_back(z_c);
-        pos_vect.push_back(y_c + side/2);
-        pos_vect.push_back(x_c + side/2);
         
     }
     else if (plane == "xz" || plane == "zx"){
@@ -85,18 +72,6 @@ int main(int argc, char **argv)
             pose1.orientation.z = -0.707;
             pose1.orientation.w = 0.0;
         }
-        pos_vect.push_back(z_c + side/2);
-        pos_vect.push_back(y_c);
-        pos_vect.push_back(x_c - side/2);
-        pos_vect.push_back(z_c - side/2);
-        pos_vect.push_back(y_c);
-        pos_vect.push_back(x_c - side/2);
-        pos_vect.push_back(z_c - side/2);
-        pos_vect.push_back(y_c);
-        pos_vect.push_back(x_c + side/2);
-        pos_vect.push_back(z_c + side/2);
-        pos_vect.push_back(y_c);
-        pos_vect.push_back(x_c + side/2);
     }
     else if (plane == "yz" || plane == "zy"){
         pose1.position.x = x_c;
@@ -114,28 +89,7 @@ int main(int argc, char **argv)
             pose1.orientation.z = 0.5;
             pose1.orientation.w = 0.5;
         }
-        pos_vect.push_back(z_c + side/2);
-        pos_vect.push_back(y_c + side/2);
-        pos_vect.push_back(x_c);
-        pos_vect.push_back(z_c - side/2);
-        pos_vect.push_back(y_c + side/2);
-        pos_vect.push_back(x_c);
-        pos_vect.push_back(z_c - side/2);
-        pos_vect.push_back(y_c - side/2);
-        pos_vect.push_back(x_c);
-        pos_vect.push_back(z_c + side/2);
-        pos_vect.push_back(y_c - side/2);
-        pos_vect.push_back(x_c);
     }
-
-
-    // pose1.position.x = 0.15;
-    // pose1.position.y = 0.3;
-    // pose1.position.z = 1.1;
-    // pose1.orientation.x = 0.707;
-    // pose1.orientation.y = 0.707;
-    // pose1.orientation.z = 0.0;
-    // pose1.orientation.w = 0.0;
     
     std::string reference_frame = "base_link_inertia";
 
@@ -151,8 +105,6 @@ int main(int argc, char **argv)
         flag = 1;
 
         arm_move_group.execute(plan_pose1);
-        geometry_msgs::Pose posep = arm_move_group.getCurrentPose().pose;
-        ROS_INFO("plan_pose1 done %f %f %f", posep.position.x,posep.position.x,posep.position.z);
 
     }
     else{
@@ -161,63 +113,76 @@ int main(int argc, char **argv)
     }
 
     if(flag){
+
+        std::vector<geometry_msgs::Pose> waypoints;
+
+        geometry_msgs::Pose start_pose = arm_move_group.getCurrentPose().pose;
+        if (plane == "xy" || plane == "yx"){
+            geometry_msgs::Pose next_pose1 = start_pose;
+            next_pose1.position.x = x_c + side/2;
+            next_pose1.position.y = y_c + side/2;
+            waypoints.push_back(next_pose1);
+
+            geometry_msgs::Pose next_pose2 = start_pose;
+            next_pose2.position.x = x_c + side/2;
+            next_pose2.position.y = y_c - side/2;
+            waypoints.push_back(next_pose2);
+
+            geometry_msgs::Pose next_pose3 = start_pose;
+            next_pose3.position.x = x_c - side/2;
+            next_pose3.position.y = y_c - side/2;
+            waypoints.push_back(next_pose3);
+
+            geometry_msgs::Pose next_pose4 = start_pose;
+            next_pose4.position.x = x_c - side/2;
+            next_pose4.position.y = y_c + side/2;
+            waypoints.push_back(next_pose4);
+        }
+        else if (plane == "xz" || plane == "zx"){
+            geometry_msgs::Pose next_pose1 = start_pose;
+            next_pose1.position.x = x_c + side/2;
+            next_pose1.position.z = z_c + side/2;
+            waypoints.push_back(next_pose1);
+
+            geometry_msgs::Pose next_pose2 = start_pose;
+            next_pose2.position.x = x_c + side/2;
+            next_pose2.position.z = z_c - side/2;
+            waypoints.push_back(next_pose2);
+
+            geometry_msgs::Pose next_pose3 = start_pose;
+            next_pose3.position.x = x_c - side/2;
+            next_pose3.position.z = z_c - side/2;
+            waypoints.push_back(next_pose3);
+
+            geometry_msgs::Pose next_pose4 = start_pose;
+            next_pose4.position.x = x_c - side/2;
+            next_pose4.position.z = z_c + side/2;
+            waypoints.push_back(next_pose4);
+        }
+        else if (plane == "yz" || plane == "zy"){
+            geometry_msgs::Pose next_pose1 = start_pose;
+            next_pose1.position.y = y_c - side/2;
+            next_pose1.position.z = z_c + side/2;
+            waypoints.push_back(next_pose1);
+
+            geometry_msgs::Pose next_pose2 = start_pose;
+            next_pose2.position.y = y_c - side/2;
+            next_pose2.position.z = z_c - side/2;
+            waypoints.push_back(next_pose2);
+
+            geometry_msgs::Pose next_pose3 = start_pose;
+            next_pose3.position.y = y_c + side/2;
+            next_pose3.position.z = z_c - side/2;
+            waypoints.push_back(next_pose3);
+
+            geometry_msgs::Pose next_pose4 = start_pose;
+            next_pose4.position.y = y_c + side/2;
+            next_pose4.position.z = z_c + side/2;
+            waypoints.push_back(next_pose4);
+        }
+
+        ArmController::planCartesianPath(start_pose, waypoints, arm_move_group);
         
-        geometry_msgs::Pose start_pose1 = arm_move_group.getCurrentPose().pose;
-        geometry_msgs::Pose end_pose1 = start_pose1;
-        // end_pose1.position.x = 0.35;
-        // end_pose1.position.y = 0.3;
-        // end_pose1.position.z = 1.15;
-        end_pose1.position.x = pos_vect.back();
-        pos_vect.pop_back();
-        end_pose1.position.y = pos_vect.back();
-        pos_vect.pop_back();
-        end_pose1.position.z = pos_vect.back();
-        pos_vect.pop_back();
-
-
-        ArmController::planCartesianPath(start_pose1, end_pose1, arm_move_group);
-
-        geometry_msgs::Pose start_pose2 = arm_move_group.getCurrentPose().pose;
-        geometry_msgs::Pose end_pose2 = start_pose2;
-        // end_pose2.position.x = 0.35;
-        // end_pose2.position.y = 0.1;
-        // end_pose2.position.z = 1.15;
-        end_pose2.position.x = pos_vect.back();
-        pos_vect.pop_back();
-        end_pose2.position.y = pos_vect.back();
-        pos_vect.pop_back();
-        end_pose2.position.z = pos_vect.back();
-        pos_vect.pop_back();
-
-        ArmController::planCartesianPath(start_pose2, end_pose2, arm_move_group);
-        
-        geometry_msgs::Pose start_pose3 = arm_move_group.getCurrentPose().pose;
-        geometry_msgs::Pose end_pose3 = start_pose3;
-        // end_pose3.position.x = 0.15;
-        // end_pose3.position.y = 0.1;
-        // end_pose3.position.z = 1.15;
-        end_pose3.position.x = pos_vect.back();
-        pos_vect.pop_back();
-        end_pose3.position.y = pos_vect.back();
-        pos_vect.pop_back();
-        end_pose3.position.z = pos_vect.back();
-        pos_vect.pop_back();
-
-        ArmController::planCartesianPath(start_pose3, end_pose3, arm_move_group);
-
-        geometry_msgs::Pose start_pose4 = arm_move_group.getCurrentPose().pose;
-        geometry_msgs::Pose end_pose4 = start_pose4;
-        // end_pose4.position.x = 0.15;
-        // end_pose4.position.y = 0.3;
-        // end_pose4.position.z = 1.15;
-        end_pose4.position.x = pos_vect.back();
-        pos_vect.pop_back();
-        end_pose4.position.y = pos_vect.back();
-        pos_vect.pop_back();
-        end_pose4.position.z = pos_vect.back();
-        pos_vect.pop_back();
-        
-        ArmController::planCartesianPath(start_pose4, end_pose4, arm_move_group);
 
     } 
     

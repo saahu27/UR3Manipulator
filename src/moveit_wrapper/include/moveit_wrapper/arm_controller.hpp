@@ -109,6 +109,6 @@ namespace ArmController
      * @brief plan a cartesian path from start_pose to end_pose
      * 
      */
-    void planCartesianPath(geometry_msgs::Pose start_pose, geometry_msgs::Pose end_pose, 
+    void planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints, 
         moveit::planning_interface::MoveGroupInterface &move_group_interface);
 };
