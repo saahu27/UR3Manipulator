@@ -168,15 +168,26 @@ void ArmController::addCollisionObjectToScene(
   planning_scene_msg.world.collision_objects.push_back(collision_obj);
 }
 
-void ArmController::planCartesianPath(geometry_msgs::Pose start_pose, geometry_msgs::Pose end_pose,
+void ArmController::InverseKinematicSolver(geometry_msgs::Pose start_pose, geometry_msgs::Pose end_pose,
   moveit::planning_interface::MoveGroupInterface &move_group_interface){
-  moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
-  const robot_state::JointModelGroup *joint_model_group = start_state.getJointModelGroup(move_group_interface.getName());
-  start_state.setFromIK(joint_model_group, start_pose);
-  move_group_interface.setStartState(start_state);
+    moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
+    const robot_state::JointModelGroup *joint_model_group = start_state.getJointModelGroup(move_group_interface.getName());
+    start_state.setFromIK(joint_model_group, start_pose);
+    move_group_interface.setStartState(start_state);
+    std::vector<geometry_msgs::Pose> waypoints;
+    waypoints.push_back(end_pose);
+    return waypoints;
+  }
 
-  std::vector<geometry_msgs::Pose> waypoints;
-  waypoints.push_back(end_pose);
+void ArmController::planCartesianPath(moveit::planning_interface::MoveGroupInterface &move_group_interface, 
+  std::vector<geometry_msgs::Pose> waypoints){
+  // moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
+  // const robot_state::JointModelGroup *joint_model_group = start_state.getJointModelGroup(move_group_interface.getName());
+  // start_state.setFromIK(joint_model_group, start_pose);
+  // move_group_interface.setStartState(start_state);
+
+  // std::vector<geometry_msgs::Pose> waypoints;
+  // waypoints.push_back(end_pose);
 
   move_group_interface.allowReplanning(true);
   move_group_interface.setMaxVelocityScalingFactor(0.1);
