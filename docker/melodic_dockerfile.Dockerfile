@@ -68,33 +68,6 @@ RUN sudo chmod +x /opt/cmake-3.16.9-Linux-x86_64.sh && \
     bash -c "yes Y | sudo /opt/cmake-3.16.9-Linux-x86_64.sh" && \
     bash -c "sudo ln -s /opt/cmake-3.16.9-Linux-x86_64/bin/* /usr/local/bin"
 
-# opencv 
-RUN mkdir -p ~/opencv cd ~/opencv && \
-    wget https://github.com/opencv/opencv/archive/3.0.0.zip && \
-    unzip 3.0.0.zip && \
-    rm 3.0.0.zip && \
-    mv opencv-3.0.0 OpenCV && \
-    cd OpenCV && \
-    mkdir build && \ 
-    cd build && \
-    cmake \
-    -DWITH_QT=ON \ 
-    -DWITH_OPENGL=ON \ 
-    -DFORCE_VTK=ON \
-    -DWITH_TBB=ON \
-    -DWITH_GDAL=ON \
-    -DWITH_XINE=ON \
-    -DBUILD_EXAMPLES=ON .. && \
-    make -j4 && \
-    make install && \ 
-    ldconfig
-COPY requirements.txt /usr/src/app/
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . /usr/src/app
-
-
-
 
 # Set up ROS
 RUN source /opt/ros/melodic/setup.bash && \
