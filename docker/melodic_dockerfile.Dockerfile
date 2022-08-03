@@ -4,7 +4,7 @@ FROM osrf/ros:melodic-desktop-full-bionic
 SHELL ["/bin/bash", "-c"]
 
 # Add new user
-RUN useradd --system --create-home --home-dir /home/user --shell /bin/bash --gid root --groups sudo,users --uid 1000 --password user@123 user && \ 
+RUN useradd --system --create-home --home-dir /home/user --shell /bin/bash --gid root --groups sudo,video,users --uid 1000 --password user@123 user && \ 
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 ENV QT_X11_NO_MITSHM=1 \
@@ -50,11 +50,27 @@ ADD --chown=user:1000 https://raw.githubusercontent.com/kanishkaganguly/dotfiles
 # Remove duplicate sources
 RUN sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo '$TZ' | sudo tee -a /etc/timezone
 
+# Install OpenCV
+RUN cd ${HOME} && \
+    git clone https://github.com/opencv/opencv.git && \
+    git -C opencv checkout 4.x && \
+    mkdir -p build && cd build && \
+    cmake ../opencv && \
+    make -j4 && \
+    sudo make install
+
 # Install ROS packages
 RUN sudo apt-get update && sudo apt-get install -y \
     python-catkin-tools \
     ros-melodic-moveit-visual-tools \
-    ros-melodic-moveit-*
+    ros-melodic-moveit-* \
+    ros-melodic-usb-cam \
+    ros-melodic-fiducial-msgs \
+    ros-melodic-aruco-detect \
+    libeigen3-dev
+
+# Install nvidia drivers
+# RUN sudo apt-get install -y nvidia-driver-510
 
 # Setup ROS workspace directory
 RUN mkdir -p $HOME/workspace/src && \
@@ -67,7 +83,6 @@ WORKDIR /opt/
 RUN sudo chmod +x /opt/cmake-3.16.9-Linux-x86_64.sh && \
     bash -c "yes Y | sudo /opt/cmake-3.16.9-Linux-x86_64.sh" && \
     bash -c "sudo ln -s /opt/cmake-3.16.9-Linux-x86_64/bin/* /usr/local/bin"
-
 
 # Set up ROS
 RUN source /opt/ros/melodic/setup.bash && \
@@ -85,7 +100,6 @@ RUN source /opt/ros/melodic/setup.bash && \
     rosdep install --from-paths src --ignore-src -y && \
     catkin build && \
     source devel/setup.bash
-
 
 # Set up working directory and bashrc
 WORKDIR ${HOME}/workspace/

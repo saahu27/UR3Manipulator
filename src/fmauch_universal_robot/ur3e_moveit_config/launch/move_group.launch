@@ -39,6 +39,7 @@
 
   <arg name="load_robot_description" default="false" />
   <arg name="z_height" default="0.0" />
+  <arg name="controller" default="scaled_pos_joint_traj_controller" />
 
   <!-- load URDF, SRDF and joint_limits configuration -->
   <include file="$(find ur3e_moveit_config)/launch/planning_context.launch">
@@ -56,6 +57,7 @@
     <arg name="moveit_manage_controllers" value="true" />
     <arg name="moveit_controller_manager" value="ur3e" unless="$(arg fake_execution)"/>
     <arg name="moveit_controller_manager" value="fake" if="$(arg fake_execution)"/>
+    <arg name="controller" value="$(arg controller)" />
   </include>
 
   <!-- Sensors Functionality -->

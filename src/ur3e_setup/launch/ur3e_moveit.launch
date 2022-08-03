@@ -33,12 +33,14 @@
     <!-- <node pkg="tf" type="static_transform_publisher" name="base_link" args="0 0 1 0 0 0 1 /map /base_link_inertia 10" /> -->
 
     <!-- Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
+    <arg name="controller" default="pos_joint_traj_controller" />
     <include file="$(find ur3e_moveit_config)/launch/move_group.launch">
         <arg name="allow_trajectory_execution" value="true"/>
         <arg name="info" value="true"/>
         <arg name="debug" value="$(arg debug)"/>
         <arg name="pipeline" value="$(arg pipeline)"/>
         <arg name="load_robot_description" value="$(arg load_robot_description)"/>
+        <arg name="controller" value="$(arg controller)" />
     </include>
 
     <!-- Run Rviz and load the default config to see the state of the move_group node -->
