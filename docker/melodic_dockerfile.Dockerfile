@@ -51,13 +51,13 @@ ADD --chown=user:1000 https://raw.githubusercontent.com/kanishkaganguly/dotfiles
 RUN sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo '$TZ' | sudo tee -a /etc/timezone
 
 # Install OpenCV
-RUN cd ${HOME} && \
-    git clone https://github.com/opencv/opencv.git && \
-    git -C opencv checkout 4.x && \
-    mkdir -p build && cd build && \
-    cmake ../opencv && \
-    make -j4 && \
-    sudo make install
+# RUN cd ${HOME} && \
+#     git clone https://github.com/opencv/opencv.git && \
+#     git -C opencv checkout 4.x && \
+#     mkdir -p build && cd build && \
+#     cmake ../opencv && \
+#     make -j4 && \
+#     sudo make install
 
 # Install ROS packages
 RUN sudo apt-get update && sudo apt-get install -y \
