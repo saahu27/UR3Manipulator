@@ -45,7 +45,7 @@ void ArucoTF::saveCalibToFile(const Eigen::Quaternionf &save_rot,
     }
 
     // Find corresponding camera data in json
-    std::string calib_section = "cam";
+    std::string calib_section = "logitech_webcam";
     auto cam_section_itr = calib_data.find(calib_section);
     if (cam_section_itr != calib_data.end()) {
       std::cout << "FOUND " << calib_section << " in calibration file."
@@ -97,7 +97,7 @@ void ArucoTF::loadCalibFromFile() {
     }
 
     // Find corresponding camera data in json
-    std::string calib_section = "cam";
+    std::string calib_section = "logitech_webcam";
     auto cam_section_itr = calib_data.find(calib_section);
     if (cam_section_itr != calib_data.end()) {
       std::cout << "FOUND " << calib_section << " in calibration file."
@@ -269,10 +269,10 @@ geometry_msgs::Transform ArucoTF::lookup_camToMarker(const int &marker_id) {
 void ArucoTF::lookup_markerToWorld() {
   // TF2 listener for marker to world
   try {
-    if (ArucoTF::tfBuffer.canTransform("world", "tool0", ros::Time(0))) {
+    if (ArucoTF::tfBuffer.canTransform("base_link", "tool0", ros::Time(0))) {
       ROS_INFO_STREAM("Getting tool0 to world");
       ArucoTF::tform_markerToWorld =
-          tfBuffer.lookupTransform("world", "tool0", ros::Time(0));
+          tfBuffer.lookupTransform("base_link", "tool0", ros::Time(0));
     } else {
       ArucoTF::tform_markerToWorld = geometry_msgs::TransformStamped();
       ROS_INFO_STREAM("Could not find transform from world to tool0");
@@ -289,8 +289,8 @@ void ArucoTF::lookup_markerToWorld() {
 void ArucoTF::broadcast_camToWorld() {
   ROS_INFO_STREAM_THROTTLE(10, "Broadcasting camera to world");
   ArucoTF::tform_camToWorld.header.stamp = ros::Time::now();
-  ArucoTF::tform_camToWorld.header.frame_id = "world";
-  ArucoTF::tform_camToWorld.child_frame_id = "cam";
+  ArucoTF::tform_camToWorld.header.frame_id = "base_link";
+  ArucoTF::tform_camToWorld.child_frame_id = "logitech_webcam";
   ArucoTF::tform_camToWorld.transform = tf2::toMsg(ArucoTF::tf_camToWorld);
   ArucoTF::br_camToWorld.sendTransform(ArucoTF::tform_camToWorld);
 }
@@ -315,7 +315,7 @@ void ArucoTF::broadcast_allMarkersToWorld() {
     // Convert back to geometry_msgs::TransformStamped
     geometry_msgs::TransformStamped tform_newMarkerToWorld;
     tform_newMarkerToWorld.header.stamp = ros::Time::now();
-    tform_newMarkerToWorld.header.frame_id = "world";
+    tform_newMarkerToWorld.header.frame_id = "base_link";
     tform_newMarkerToWorld.child_frame_id = "marker_" + std::to_string(i);
     tform_newMarkerToWorld.transform = tf2::toMsg(tf_newMarkerToWorld);
 
@@ -383,7 +383,7 @@ int main(int argc, char **argv) {
   // Verify calibration
   n.param<bool>("verify_calibration", verify_calib, false);
   // Number of poses to use for calibration
-  n.param<int>("num_poses", num_poses, 10);
+  n.param<int>("num_poses", num_poses, 2);
 
   ROS_INFO("----------------------------------------------------------");
   // Set number of poses to capture for calibration
@@ -396,13 +396,12 @@ int main(int argc, char **argv) {
     calibrate_cam.loadCalibFromFile();
   }
   ROS_INFO("----------------------------------------------------------");
-//   if (verify_calib) {
-//     calibrate_cam.verifyCalibration(1);
-//   }
+  if (verify_calib) {
+    calibrate_cam.verifyCalibration(1);
+  }
 
   while (n.ok()) {
     calibrate_cam.broadcast_camToWorld();
-
     ros::spinOnce();
     rate.sleep();
   }

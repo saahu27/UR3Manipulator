@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   tf2_ros
   message_generation
+  moveit_wrapper
 )
 
 # ========================== Find Eigen ========================================================= #
@@ -41,7 +42,11 @@ catkin_package(
         fiducial_msgs
         tf2
         tf2_ros
+        moveit_wrapper
 )
 
 add_executable(aruco_tf src/aruco_tf.cpp)
 target_link_libraries(aruco_tf ${catkin_LIBRARIES})
+
+add_executable(scene src/scene.cpp)
+target_link_libraries(scene ${catkin_LIBRARIES})
