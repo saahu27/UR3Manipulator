@@ -41,9 +41,7 @@ bool ArmController::planToNamedTarget(
 bool ArmController::planToPoseTarget(
     MoveitPlanning::PlanningOptions &options,
     moveit::planning_interface::MoveGroupInterface &move_group_interface,
-    geometry_msgs::Pose &target_pose, std::string &reference_frame,
-    moveit::planning_interface::MoveGroupInterface::Plan &plan,
-    std::string &end_effector_name) {
+    geometry_msgs::Pose &target_pose, moveit::planning_interface::MoveGroupInterface::Plan &plan) {
   move_group_interface.clearPoseTargets();
   move_group_interface.setPlanningTime(options.set_planning_time);
   move_group_interface.allowReplanning(options.allow_replanning);
@@ -54,14 +52,8 @@ bool ArmController::planToPoseTarget(
       options.velocity_scaling_factor);
   move_group_interface.setStartState(*move_group_interface.getCurrentState());
   move_group_interface.setPoseTarget(target_pose);
-  // if (reference_frame != "") {
-  //   move_group_interface.setPoseReferenceFrame(reference_frame);
-  // }
-  // if (end_effector_name != "") {
-  //   move_group_interface.setEndEffector(end_effector_name + "_ee");
-  // }
   move_group_interface.setPlannerId("RRTConnect");
-  ROS_INFO("Planning for: %s", move_group_interface.getEndEffector().c_str());
+  ROS_INFO("Planning for the Pose Target");
 
   // Do planning for entire group
   bool plan_success = false;
@@ -82,11 +74,9 @@ bool ArmController::planToPoseTarget(
 bool ArmController::planToJointTargets(
     MoveitPlanning::PlanningOptions &options,
     moveit::planning_interface::MoveGroupInterface &move_group_interface,
-    std::string &reference_frame,
     moveit::planning_interface::MoveGroupInterface::Plan &plan,
     std::map<std::string, double> &joint_targets) {
   move_group_interface.clearPoseTargets();
-  move_group_interface.setPoseReferenceFrame(reference_frame);
   move_group_interface.setPlanningTime(options.set_planning_time);
   move_group_interface.allowReplanning(options.allow_replanning);
   move_group_interface.setNumPlanningAttempts(options.num_attempts);
@@ -96,10 +86,10 @@ bool ArmController::planToJointTargets(
       options.goal_orientation_tolerance);
   move_group_interface.setGoalJointTolerance(options.goal_joint_tolerance);
   move_group_interface.setStartState(*move_group_interface.getCurrentState());
-  move_group_interface.setPlannerId("TRRTkConfigDefault");
+  move_group_interface.setPlannerId("RRTConnect");
 
   move_group_interface.setJointValueTarget(joint_targets);
-  ROS_INFO("Planning for: %s", move_group_interface.getEndEffector().c_str());
+  ROS_INFO("Planning for the Joint Target");
 
   // Do planning for entire group
   bool plan_success = false;

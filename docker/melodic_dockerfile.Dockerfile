@@ -12,7 +12,12 @@ ENV QT_X11_NO_MITSHM=1 \
     LANG=en_US.UTF-8 \
     HOME=/home/user \
     XDG_RUNTIME_DIR=/run/user/1000 \
-    TZ=America/New_York
+    TZ=America/New_York 
+
+ENV NVIDIA_VISIBLE_DEVICES \
+    ${NVIDIA_VISIBLE_DEVICES:-all}
+ENV NVIDIA_DRIVER_CAPABILITIES \
+    ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
 
 USER $USER
 WORKDIR $HOME
@@ -40,6 +45,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends --all
     tmux \
     tzdata \
     xclip \
+    mesa-utils \
     x11proto-gl-dev && \
     sudo rm -rf /var/lib/apt/lists/*
 

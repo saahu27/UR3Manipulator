@@ -48,25 +48,19 @@ namespace ArmController
      * plan
      * @param move_group_interface The MoveGroup for which to plan
      * @param target_pose The target pose
-     * @param reference_frame The frame of reference for planning
      * @param plan The reference to the plan, which will be populated
-     * @param end_effector_name The name of the end-effector for which plan is
-     * computed
      * @return Planning success or failure boolean
      */
     bool planToPoseTarget(
         MoveitPlanning::PlanningOptions &options,
         moveit::planning_interface::MoveGroupInterface &move_group_interface,
-        geometry_msgs::Pose &target_pose, std::string &reference_frame,
-        moveit::planning_interface::MoveGroupInterface::Plan &plan,
-        std::string &end_effector_name);
+        geometry_msgs::Pose &target_pose, moveit::planning_interface::MoveGroupInterface::Plan &plan);
 
     /**
      * @brief Construct plan to given Joint target
      * @param options shadow_planning::PlanningOptions object for computing the
      * plan
      * @param move_group_interface The MoveGroup for which to plan
-     * @param reference_frame The frame of reference for planning
      * @param plan The reference to the plan, which will be populated
      * @param joint_targets Map from joint name to the target value
      * @return Planning success or failure boolean
@@ -74,7 +68,6 @@ namespace ArmController
     bool planToJointTargets(
         MoveitPlanning::PlanningOptions &options,
         moveit::planning_interface::MoveGroupInterface &move_group_interface,
-        std::string &reference_frame,
         moveit::planning_interface::MoveGroupInterface::Plan &plan,
         std::map<std::string, double> &joint_targets);
     

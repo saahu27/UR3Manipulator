@@ -90,14 +90,12 @@ int main(int argc, char **argv)
             pose1.orientation.w = 0.5;
         }
     }
-    
-    std::string reference_frame = "base_link_inertia";
 
     // Create instance of Plan
     moveit::planning_interface::MoveGroupInterface::Plan plan_pose1;
-    std::string end_effector_name = "moveit";
+
     bool plan_success;
-    plan_success = ArmController::planToPoseTarget(planning_options,arm_move_group,pose1,reference_frame,plan_pose1,end_effector_name);
+    plan_success = ArmController::planToPoseTarget(planning_options,arm_move_group,pose1,plan_pose1);
 
     if(plan_success){
         ROS_INFO("pose 1 plan succeeded");
