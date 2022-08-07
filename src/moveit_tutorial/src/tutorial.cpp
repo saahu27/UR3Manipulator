@@ -3,9 +3,9 @@
 int main(int argc, char **argv){
     // Setup ROS node
     ros::init(argc, argv, "tutorial");
+    ros::NodeHandle n;
     ros::AsyncSpinner spinner(4);
     spinner.start();
-    ros::NodeHandle n;
 
     // Create Planning Options
     MoveitPlanning::PlanningOptions planning_options = MoveitPlanning::PlanningOptions();
@@ -63,19 +63,18 @@ int main(int argc, char **argv){
     // Create instance of cartesian plan
     moveit::planning_interface::MoveGroupInterface::Plan cartesian_plan;
 
+    // Get the start Pose
+    geometry_msgs::Pose start_pose = arm_move_group.getCurrentPose().pose;
+
+    geometry_msgs::Pose end_pose = start_pose;
+    end_pose.position.x += 0.1;
+    end_pose.position.y -= 0.1;
+    end_pose.position.z -= 0.1;
+
     // Define waypoints for the cartesian path
     std::vector<geometry_msgs::Pose> waypoints;
+    waypoints.push_back(end_pose);
 
-    // Get the current Pose
-    geometry_msgs::Pose current_pose = arm_move_group.getCurrentPose().pose;
-
-    geometry_msgs::Pose next_pose = current_pose;
-    next_pose.position.x += 0.1;
-    next_pose.position.y -= 0.1;
-    next_pose.position.z -= 0.1;
-
-    waypoints.push_back(next_pose);
-
-    ArmController::planCartesianPath(current_pose, waypoints, arm_move_group);
+    ArmController::planCartesianPath(start_pose, waypoints, arm_move_group);
 
 }
