@@ -196,6 +196,7 @@ void ArucoTF::takeCalibrationSamples() {
   int sample_cnt = 0;
   ROS_INFO_STREAM("Move robot to pose...");
   ROS_INFO_STREAM("Press ENTER to record sample.");
+<<<<<<< HEAD
   
   if(ArucoTF::recordCalibPoints){
     std::string calib_points_path = ros::package::getPath("lab_2");
@@ -203,6 +204,8 @@ void ArucoTF::takeCalibrationSamples() {
     ArucoTF::file.open(calib_points_path);
   }
   
+=======
+>>>>>>> 9e3fc93 (yes)
 
   while (sample_cnt < num_samples) {
     ROS_INFO_STREAM("Pose: " << sample_cnt + 1 << "/"
@@ -223,6 +226,7 @@ void ArucoTF::takeCalibrationSamples() {
                         ArucoTF::tform_markerToWorld.transform.translation.z)
             .transpose();
 
+<<<<<<< HEAD
     if(ArucoTF::recordCalibPoints){
       ArucoTF::file << ArucoTF::tform_camToMarker.translation.x << " " 
         << ArucoTF::tform_camToMarker.translation.y << " " 
@@ -238,6 +242,11 @@ void ArucoTF::takeCalibrationSamples() {
   }
   ROS_INFO_ONCE("Calibration samples gathered");
   if(ArucoTF::recordCalibPoints) ArucoTF::file.close();
+=======
+    sample_cnt++;
+  }
+  ROS_INFO_ONCE("Calibration samples gathered");
+>>>>>>> 9e3fc93 (yes)
 }
 
 /**
@@ -277,7 +286,11 @@ geometry_msgs::Transform ArucoTF::lookup_camToMarker(const int &marker_id) {
     }
   }
 
+<<<<<<< HEAD
   // throw(ArucoTF::NoTransformException());
+=======
+  throw(ArucoTF::NoTransformException());
+>>>>>>> 9e3fc93 (yes)
 }
 
 /**
@@ -288,10 +301,17 @@ geometry_msgs::Transform ArucoTF::lookup_camToMarker(const int &marker_id) {
 void ArucoTF::lookup_markerToWorld() {
   // TF2 listener for marker to world
   try {
+<<<<<<< HEAD
     if (ArucoTF::tfBuffer.canTransform("base_link_inertia", "tool0", ros::Time(0))) {
       ROS_INFO_STREAM("Getting tool0 to world");
       ArucoTF::tform_markerToWorld =
           tfBuffer.lookupTransform("base_link_inertia", "tool0", ros::Time(0));
+=======
+    if (ArucoTF::tfBuffer.canTransform("base_link", "tool0", ros::Time(0))) {
+      ROS_INFO_STREAM("Getting tool0 to world");
+      ArucoTF::tform_markerToWorld =
+          tfBuffer.lookupTransform("base_link", "tool0", ros::Time(0));
+>>>>>>> 9e3fc93 (yes)
     } else {
       ArucoTF::tform_markerToWorld = geometry_msgs::TransformStamped();
       ROS_INFO_STREAM("Could not find transform from world to tool0");
@@ -308,7 +328,11 @@ void ArucoTF::lookup_markerToWorld() {
 void ArucoTF::broadcast_camToWorld() {
   ROS_INFO_STREAM_THROTTLE(10, "Broadcasting camera to world");
   ArucoTF::tform_camToWorld.header.stamp = ros::Time::now();
+<<<<<<< HEAD
   ArucoTF::tform_camToWorld.header.frame_id = "base_link_inertia";
+=======
+  ArucoTF::tform_camToWorld.header.frame_id = "base_link";
+>>>>>>> 9e3fc93 (yes)
   ArucoTF::tform_camToWorld.child_frame_id = "logitech_webcam";
   ArucoTF::tform_camToWorld.transform = tf2::toMsg(ArucoTF::tf_camToWorld);
   ArucoTF::br_camToWorld.sendTransform(ArucoTF::tform_camToWorld);
@@ -334,7 +358,11 @@ void ArucoTF::broadcast_allMarkersToWorld() {
     // Convert back to geometry_msgs::TransformStamped
     geometry_msgs::TransformStamped tform_newMarkerToWorld;
     tform_newMarkerToWorld.header.stamp = ros::Time::now();
+<<<<<<< HEAD
     tform_newMarkerToWorld.header.frame_id = "base_link_inertia";
+=======
+    tform_newMarkerToWorld.header.frame_id = "base_link";
+>>>>>>> 9e3fc93 (yes)
     tform_newMarkerToWorld.child_frame_id = "marker_" + std::to_string(i);
     tform_newMarkerToWorld.transform = tf2::toMsg(tf_newMarkerToWorld);
 
@@ -364,6 +392,7 @@ void ArucoTF::lookup_allMarkersToWorld(const int &marker_id,
   }
 }
 
+<<<<<<< HEAD
 void ArucoTF::getCalibratedPoints(){
   std::string calib_points_path = ros::package::getPath("lab_2");
   calib_points_path += "/calib_points.txt";
@@ -425,6 +454,8 @@ void ArucoTF::getCalibratedPoints(){
 
 }
 
+=======
+>>>>>>> 9e3fc93 (yes)
 /**
  * @brief Compare calibration marker to ideal transformation
  *
@@ -458,14 +489,20 @@ int main(int argc, char **argv) {
   bool load_calib;
   bool verify_calib;
   int num_poses;
+<<<<<<< HEAD
   bool record;
   // Load external calibration file
   n.param<bool>("load_calibration", load_calib, true);
+=======
+  // Load external calibration file
+  n.param<bool>("load_calibration", load_calib, false);
+>>>>>>> 9e3fc93 (yes)
   // Verify calibration
   n.param<bool>("verify_calibration", verify_calib, false);
   // Number of poses to use for calibration
   n.param<int>("num_poses", num_poses, 2);
 
+<<<<<<< HEAD
   n.param<bool>("record_calib_points", record, false);
 
   ROS_INFO("----------------------------------------------------------");
@@ -478,12 +515,24 @@ int main(int argc, char **argv) {
   } else {
     calibrate_cam.loadCalibFromFile();
     calibrate_cam.getCalibratedPoints();
+=======
+  ROS_INFO("----------------------------------------------------------");
+  // Set number of poses to capture for calibration
+  ArucoTF calibrate_cam(load_calib, num_poses);
+  // Camera calibration
+  if (!calibrate_cam.load_calib) {
+    calibrate_cam.takeCalibrationSamples();
+    calibrate_cam.estimateTransformPointToPoint();
+  } else {
+    calibrate_cam.loadCalibFromFile();
+>>>>>>> 9e3fc93 (yes)
   }
   ROS_INFO("----------------------------------------------------------");
   if (verify_calib) {
     calibrate_cam.verifyCalibration(1);
   }
 
+<<<<<<< HEAD
   tf2::Transform tf_pickMarkerToWorld;
   // tf2::Transform tf_placeMarkerToWorld;
 
@@ -529,4 +578,11 @@ int main(int argc, char **argv) {
 
 
 
+=======
+  while (n.ok()) {
+    calibrate_cam.broadcast_camToWorld();
+    ros::spinOnce();
+    rate.sleep();
+  }
+>>>>>>> 9e3fc93 (yes)
 }

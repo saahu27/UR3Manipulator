@@ -20,11 +20,14 @@
   <arg name="controllers" default="joint_state_controller scaled_pos_joint_traj_controller"/>
   <arg name="stopped_controllers" default="joint_group_pos_controller"/>
 
+<<<<<<< HEAD
   <!-- gripper args -->
   <arg name="gripper" default="false" />
   <arg name="gripper_controller_config_file" default="$(find robotiq_control)/config/gripper_hande_controller.yaml" />
   <arg name="gripper_controllers" default="gripper_controller" />
 
+=======
+>>>>>>> 9e3fc93 (yes)
   <!-- Gazebo parameters -->
   <arg name="gazebo_model_name" default="robot" doc="The name to give to the model in Gazebo (after spawning it)." />
   <arg name="gazebo_world" default="worlds/empty.world" doc="The '.world' file to load in Gazebo." />
@@ -36,10 +39,13 @@
 
   <!-- Load controller settings -->
   <rosparam file="$(arg controller_config_file)" command="load"/>
+<<<<<<< HEAD
   
   <group if="$(arg gripper)">
     <rosparam file="$(arg gripper_controller_config_file)" command="load"/>
   </group>
+=======
+>>>>>>> 9e3fc93 (yes)
 
   <!-- Start Gazebo and load the empty world if requested to do so -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch" if="$(arg start_gazebo)">
@@ -61,11 +67,14 @@
   <node name="ros_control_controller_spawner" pkg="controller_manager" type="spawner"
     args="$(arg controllers)" output="screen" respawn="false" />
 
+<<<<<<< HEAD
   <group if="$(arg gripper)">
     <node name="gripper_control_controller_spawner" pkg="controller_manager" type="spawner"
       args="$(arg gripper_controllers)" output="screen" respawn="false" />
   </group>
 
+=======
+>>>>>>> 9e3fc93 (yes)
   <!-- Load other controllers, but do not start them -->
   <node name="ros_control_stopped_spawner" pkg="controller_manager" type="spawner"
     args="--stopped $(arg stopped_controllers)" output="screen" respawn="false" />

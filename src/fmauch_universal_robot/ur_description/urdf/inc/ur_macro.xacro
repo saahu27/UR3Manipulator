@@ -54,12 +54,17 @@
   <xacro:include filename="$(find ur_description)/urdf/inc/ur_transmissions.xacro" />
   <xacro:include filename="$(find ur_description)/urdf/inc/ur_common.xacro" />
 
+<<<<<<< HEAD
   <!-- robotiq_hande_gripper -->
   <xacro:include filename="$(find robotiq_description)/urdf/robotiq_hande_gripper.urdf.xacro" />
 
   <xacro:macro name="ur_robot" params="
     prefix
     gripper
+=======
+  <xacro:macro name="ur_robot" params="
+    prefix
+>>>>>>> 9e3fc93 (yes)
     z_height
     joint_limits_parameters_file
     kinematics_parameters_file
@@ -223,6 +228,7 @@
         <origin xyz="0.0 0.0 ${-0.5 * wrist_3_inertia_length}" rpy="0 0 0" />
       </xacro:cylinder_inertial>
     </link>
+<<<<<<< HEAD
     <!-- <xacro:if value="${gripper}">
       <link name="gripper_root_link">
         <visual>
@@ -246,6 +252,8 @@
         </inertial>
       </link>
     </xacro:if> -->
+=======
+>>>>>>> 9e3fc93 (yes)
 
     <!-- joints: main serial chain -->
     <joint name="${prefix}base_link-base_link_inertia" type="fixed">
@@ -256,7 +264,11 @@
            Use the joint between 'base_link' and 'base_link_inertia' (a dummy
            link/frame) to introduce the necessary rotation over Z (of pi rad).
       -->
+<<<<<<< HEAD
       <origin xyz="0 0 ${z_height}" rpy="0 0 ${pi}" /> 
+=======
+      <origin xyz="0 0 ${z_height}" rpy="0 0 ${pi}" />
+>>>>>>> 9e3fc93 (yes)
     </joint>
     <joint name="${prefix}shoulder_pan_joint" type="revolute">
       <parent link="${prefix}base_link_inertia" />
@@ -330,6 +342,7 @@
       </xacro:if>
       <dynamics damping="0" friction="0"/>
     </joint>
+<<<<<<< HEAD
     <xacro:if value="${gripper}">
       <!-- <joint name="gripper_joint" type="fixed">
         <parent link="${prefix}wrist_3_link" />
@@ -342,6 +355,8 @@
         <origin xyz="0.0 0 0.005" rpy="0 0 0"/>
       </xacro:robotiq_hande_gripper>
     </xacro:if>
+=======
+>>>>>>> 9e3fc93 (yes)
 
     <!-- ROS-Industrial 'base' frame: base_link to UR 'Base' Coordinates transform -->
     <link name="${prefix}base"/>

@@ -49,7 +49,11 @@ add_executable(aruco_tf src/aruco_tf.cpp)
 target_link_libraries(aruco_tf ${catkin_LIBRARIES})
 
 add_executable(scene src/scene.cpp)
+<<<<<<< HEAD
 target_link_libraries(scene ${catkin_LIBRARIES})
 
 add_executable(pick_place src/pick_place.cpp)
 target_link_libraries(pick_place ${catkin_LIBRARIES})
+=======
+target_link_libraries(scene ${catkin_LIBRARIES})
+>>>>>>> 9e3fc93 (yes)

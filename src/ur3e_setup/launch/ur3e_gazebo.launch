@@ -41,10 +41,13 @@
   <arg name="controllers" default="joint_state_controller pos_joint_traj_controller" doc="Controllers that are activated by default."/>
   <arg name="stopped_controllers" default="joint_group_pos_controller" doc="Controllers that are initally loaded, but not started."/>
 
+<<<<<<< HEAD
   <!-- Gripper controller configuration -->
   <arg name="gripper_controller_config_file" default="$(find robotiq_control)/config/gripper_hande_controller.yaml" />
   <arg name="gripper_controllers" default="left_gripper_controller right_gripper_controller" />
 
+=======
+>>>>>>> 9e3fc93 (yes)
   <!-- robot_state_publisher configuration -->
   <arg name="tf_prefix" default="" doc="tf_prefix used for the robot."/>
   <arg name="tf_pub_rate" default="500" doc="Rate at which robot_state_publisher should publish transforms."/>
@@ -56,9 +59,12 @@
   <arg name="spawn_z" default="0.0" />
   <arg name="z_height" default="0.0" />
 
+<<<<<<< HEAD
   <!-- gripper -->
   <arg name="gripper" default="false" />
 
+=======
+>>>>>>> 9e3fc93 (yes)
   <!-- Load urdf on the parameter server -->
   <include file="$(arg robot_description_file)">
     <arg name="joint_limit_params" value="$(arg joint_limit_params)"/>
@@ -66,7 +72,10 @@
     <arg name="physical_params" value="$(arg physical_params)"/>
     <arg name="visual_params" value="$(arg visual_params)"/>
     <arg name="z_height" value="$(arg z_height)" />
+<<<<<<< HEAD
     <arg name="gripper" value="$(arg gripper)" />
+=======
+>>>>>>> 9e3fc93 (yes)
   </include>
 
   <!-- Robot state publisher -->
@@ -83,8 +92,11 @@
     <arg name="paused" value="$(arg paused)"/>
     <arg name="stopped_controllers" value="$(arg stopped_controllers)"/>
     <arg name="spawn_z" value="$(arg spawn_z)"/>
+<<<<<<< HEAD
     <arg name="gripper" value="$(arg gripper)" />
     <arg name="gripper_controller_config_file" value="$(arg gripper_controller_config_file)"/>
     <arg name="gripper_controllers" value="$(arg gripper_controllers)"/>
+=======
+>>>>>>> 9e3fc93 (yes)
   </include>
 </launch>

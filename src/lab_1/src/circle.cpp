@@ -95,10 +95,15 @@ int main(int argc, char **argv)
     // Create instance of Plan
     moveit::planning_interface::MoveGroupInterface::Plan plan_pose1;
 
+<<<<<<< HEAD
     std::string reference_frame = "base_link";
 
     bool plan_success;
     plan_success = ArmController::planToPoseTarget(planning_options,arm_move_group,pose1,reference_frame,plan_pose1);
+=======
+    bool plan_success;
+    plan_success = ArmController::planToPoseTarget(planning_options,arm_move_group,pose1,plan_pose1);
+>>>>>>> 9e3fc93 (yes)
 
     if(plan_success){
         ROS_INFO("pose 1 plan succeeded");
@@ -144,10 +149,14 @@ int main(int argc, char **argv)
             }
         }
 
+<<<<<<< HEAD
         moveit_msgs::RobotTrajectory trajectory;
         trajectory = ArmController::planCartesianPath(start_pose, waypoints, reference_frame, arm_move_group);
 
         arm_move_group.execute(trajectory);
+=======
+        ArmController::planCartesianPath(start_pose, waypoints, arm_move_group);
+>>>>>>> 9e3fc93 (yes)
 
     } 
     

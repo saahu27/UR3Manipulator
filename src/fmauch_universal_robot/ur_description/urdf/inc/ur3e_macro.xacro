@@ -21,7 +21,11 @@
           real robot.
   -->
   
+<<<<<<< HEAD
   <!-- <xacro:arg name="z_h" default="$(arg z_height)" /> -->
+=======
+  <xacro:arg name="z_h" default="$(arg z_height)" />
+>>>>>>> 9e3fc93 (yes)
 
   <xacro:macro name="ur3e_robot" params="
    prefix
@@ -35,7 +39,11 @@
    safety_k_position:=20"
   >
     <xacro:include filename="$(find ur_description)/urdf/inc/ur_macro.xacro">
+<<<<<<< HEAD
       <!-- <xacro:arg name="z_h" default="$(arg z_h)" /> -->
+=======
+      <xacro:arg name="z_h" default="$(arg z_h)" />
+>>>>>>> 9e3fc93 (yes)
     </xacro:include>
 
     <xacro:ur_robot

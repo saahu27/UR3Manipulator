@@ -54,7 +54,11 @@ namespace ArmController
     bool planToPoseTarget(
         MoveitPlanning::PlanningOptions &options,
         moveit::planning_interface::MoveGroupInterface &move_group_interface,
+<<<<<<< HEAD
         geometry_msgs::Pose &target_pose, std::string &reference_frame, moveit::planning_interface::MoveGroupInterface::Plan &plan);
+=======
+        geometry_msgs::Pose &target_pose, moveit::planning_interface::MoveGroupInterface::Plan &plan);
+>>>>>>> 9e3fc93 (yes)
 
     /**
      * @brief Construct plan to given Joint target
@@ -102,6 +106,7 @@ namespace ArmController
      * @brief plan a cartesian path from start_pose to end_pose
      * 
      */
+<<<<<<< HEAD
     moveit_msgs::RobotTrajectory planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints, 
         std::string &reference_frame, moveit::planning_interface::MoveGroupInterface &move_group_interface);
     
@@ -109,4 +114,8 @@ namespace ArmController
 
     void extract_eef_from_trajectory(moveit::planning_interface::MoveGroupInterface &move_group_interface, std::string out_path,
         moveit_msgs::RobotTrajectory trajectory);
+=======
+    void planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints, 
+        moveit::planning_interface::MoveGroupInterface &move_group_interface);
+>>>>>>> 9e3fc93 (yes)
 };

@@ -43,7 +43,10 @@
   <xacro:macro name="ur_robot_gazebo" params="
    prefix
    z_height
+<<<<<<< HEAD
    gripper
+=======
+>>>>>>> 9e3fc93 (yes)
    joint_limits_parameters_file
    kinematics_parameters_file
    physical_parameters_file
@@ -65,7 +68,10 @@
     <xacro:ur_robot
       prefix="${prefix}"
       z_height="${z_height}"
+<<<<<<< HEAD
       gripper="${gripper}"
+=======
+>>>>>>> 9e3fc93 (yes)
       joint_limits_parameters_file="${joint_limits_parameters_file}"
       kinematics_parameters_file="${kinematics_parameters_file}"
       physical_parameters_file="${physical_parameters_file}"

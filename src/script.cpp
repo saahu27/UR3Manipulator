@@ -13,8 +13,13 @@ int main(){
     string word;
     double num;
     ofstream joint;
+<<<<<<< HEAD
     joint.open("square_joint_val.txt");
     newfile.open("square.txt",ios::in);
+=======
+    joint.open("joint.csv");
+    newfile.open("joint.yaml",ios::in);
+>>>>>>> 9e3fc93 (yes)
     if(newfile.is_open()){
         string tp;
         while(getline(newfile, tp)){
@@ -39,7 +44,11 @@ int main(){
                             joint << v[k] << endl;
                         }
                         else{
+<<<<<<< HEAD
                             joint << v[k] << " ";
+=======
+                            joint << v[k] << ",";
+>>>>>>> 9e3fc93 (yes)
                         }
                     }
                 }
@@ -49,4 +58,8 @@ int main(){
         }
         newfile.close();
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 9e3fc93 (yes)

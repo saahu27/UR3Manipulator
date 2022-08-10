@@ -41,7 +41,11 @@ bool ArmController::planToNamedTarget(
 bool ArmController::planToPoseTarget(
     MoveitPlanning::PlanningOptions &options,
     moveit::planning_interface::MoveGroupInterface &move_group_interface,
+<<<<<<< HEAD
     geometry_msgs::Pose &target_pose, std::string &reference_frame, moveit::planning_interface::MoveGroupInterface::Plan &plan) {
+=======
+    geometry_msgs::Pose &target_pose, moveit::planning_interface::MoveGroupInterface::Plan &plan) {
+>>>>>>> 9e3fc93 (yes)
   move_group_interface.clearPoseTargets();
   move_group_interface.setPlanningTime(options.set_planning_time);
   move_group_interface.allowReplanning(options.allow_replanning);
@@ -53,7 +57,10 @@ bool ArmController::planToPoseTarget(
   move_group_interface.setStartState(*move_group_interface.getCurrentState());
   move_group_interface.setPoseTarget(target_pose);
   move_group_interface.setPlannerId("RRTConnect");
+<<<<<<< HEAD
   move_group_interface.setPoseReferenceFrame(reference_frame);
+=======
+>>>>>>> 9e3fc93 (yes)
   ROS_INFO("Planning for the Pose Target");
 
   // Do planning for entire group
@@ -159,8 +166,13 @@ void ArmController::addCollisionObjectToScene(
   planning_scene_msg.world.collision_objects.push_back(collision_obj);
 }
 
+<<<<<<< HEAD
 moveit_msgs::RobotTrajectory ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints,
   std::string &reference_frame, moveit::planning_interface::MoveGroupInterface &move_group_interface){
+=======
+void ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints,
+  moveit::planning_interface::MoveGroupInterface &move_group_interface){
+>>>>>>> 9e3fc93 (yes)
   moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
   const robot_state::JointModelGroup *joint_model_group = start_state.getJointModelGroup(move_group_interface.getName());
   start_state.setFromIK(joint_model_group, start_pose);
@@ -172,7 +184,10 @@ moveit_msgs::RobotTrajectory ArmController::planCartesianPath(geometry_msgs::Pos
   move_group_interface.allowReplanning(true);
   move_group_interface.setMaxVelocityScalingFactor(0.1);
   move_group_interface.setMaxAccelerationScalingFactor(0.1);
+<<<<<<< HEAD
   move_group_interface.setPoseReferenceFrame(reference_frame);
+=======
+>>>>>>> 9e3fc93 (yes)
 
   moveit_msgs::RobotTrajectory trajectory;
   const double jump_threshold = 5.0;
@@ -181,6 +196,7 @@ moveit_msgs::RobotTrajectory ArmController::planCartesianPath(geometry_msgs::Pos
 
   ROS_INFO("Planned %.2f%% of path...", (fraction * 100));
 
+<<<<<<< HEAD
   // if(fraction >= 0.0) move_group_interface.execute(trajectory);
   // else ROS_INFO("plan_failed");
 
@@ -248,4 +264,8 @@ void ArmController::extract_eef_from_trajectory(moveit::planning_interface::Move
     }
 
     eef_file.close();
+=======
+  if(fraction >= 0.0) move_group_interface.execute(trajectory);
+  else ROS_INFO("plan_failed");
+>>>>>>> 9e3fc93 (yes)
 }

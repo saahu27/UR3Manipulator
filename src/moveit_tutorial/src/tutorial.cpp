@@ -53,8 +53,12 @@ int main(int argc, char **argv){
     pose_target.orientation.w = 0.707;
 
     bool pose_plan_success;
+<<<<<<< HEAD
     std::string reference_frame = "base_link";
     pose_plan_success = ArmController::planToPoseTarget(planning_options, arm_move_group, pose_target, reference_frame, pose_plan);
+=======
+    pose_plan_success = ArmController::planToPoseTarget(planning_options, arm_move_group, pose_target, pose_plan);
+>>>>>>> 9e3fc93 (yes)
 
     if(pose_plan_success){
         ROS_INFO("Moving to pose target");
@@ -76,6 +80,7 @@ int main(int argc, char **argv){
     std::vector<geometry_msgs::Pose> waypoints;
     waypoints.push_back(end_pose);
 
+<<<<<<< HEAD
     moveit_msgs::RobotTrajectory trajectory;
     trajectory = ArmController::planCartesianPath(start_pose, waypoints, reference_frame, arm_move_group);
 
@@ -84,5 +89,8 @@ int main(int argc, char **argv){
     ArmController::extract_eef_from_trajectory(arm_move_group,out_path,trajectory);
 
     arm_move_group.execute(trajectory);
+=======
+    ArmController::planCartesianPath(start_pose, waypoints, arm_move_group);
+>>>>>>> 9e3fc93 (yes)
 
 }
