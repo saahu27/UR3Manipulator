@@ -54,8 +54,7 @@ namespace ArmController
     bool planToPoseTarget(
         MoveitPlanning::PlanningOptions &options,
         moveit::planning_interface::MoveGroupInterface &move_group_interface,
-        geometry_msgs::Pose &target_pose, std::string &reference_frame,
-        moveit::planning_interface::MoveGroupInterface::Plan &plan);
+        geometry_msgs::Pose &target_pose, moveit::planning_interface::MoveGroupInterface::Plan &plan);
 
     /**
      * @brief Construct plan to given Joint target
@@ -103,6 +102,6 @@ namespace ArmController
      * @brief plan a cartesian path from start_pose to end_pose
      * 
      */
-    void planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints,
-        std::string &reference_frame, moveit::planning_interface::MoveGroupInterface &move_group_interface);
+    void planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints, 
+        moveit::planning_interface::MoveGroupInterface &move_group_interface);
 };
