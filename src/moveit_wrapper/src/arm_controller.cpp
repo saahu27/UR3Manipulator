@@ -41,7 +41,8 @@ bool ArmController::planToNamedTarget(
 bool ArmController::planToPoseTarget(
     MoveitPlanning::PlanningOptions &options,
     moveit::planning_interface::MoveGroupInterface &move_group_interface,
-    geometry_msgs::Pose &target_pose, moveit::planning_interface::MoveGroupInterface::Plan &plan) {
+    geometry_msgs::Pose &target_pose, std::string &reference_frame,
+    moveit::planning_interface::MoveGroupInterface::Plan &plan) {
   move_group_interface.clearPoseTargets();
   move_group_interface.setPlanningTime(options.set_planning_time);
   move_group_interface.allowReplanning(options.allow_replanning);
@@ -53,6 +54,7 @@ bool ArmController::planToPoseTarget(
   move_group_interface.setStartState(*move_group_interface.getCurrentState());
   move_group_interface.setPoseTarget(target_pose);
   move_group_interface.setPlannerId("RRTConnect");
+  move_group_interface.setPoseReferenceFrame(reference_frame);
   ROS_INFO("Planning for the Pose Target");
 
   // Do planning for entire group
@@ -159,7 +161,7 @@ void ArmController::addCollisionObjectToScene(
 }
 
 void ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints,
-  moveit::planning_interface::MoveGroupInterface &move_group_interface){
+  std::string &reference_frame, moveit::planning_interface::MoveGroupInterface &move_group_interface){
   moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
   const robot_state::JointModelGroup *joint_model_group = start_state.getJointModelGroup(move_group_interface.getName());
   start_state.setFromIK(joint_model_group, start_pose);
@@ -171,6 +173,7 @@ void ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vecto
   move_group_interface.allowReplanning(true);
   move_group_interface.setMaxVelocityScalingFactor(0.1);
   move_group_interface.setMaxAccelerationScalingFactor(0.1);
+  move_group_interface.setPoseReferenceFrame(reference_frame);
 
   moveit_msgs::RobotTrajectory trajectory;
   const double jump_threshold = 5.0;
