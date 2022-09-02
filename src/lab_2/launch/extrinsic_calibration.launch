@@ -8,8 +8,8 @@
     <!-- Start webcam -->
     <node name="$(arg camera_name)" pkg="usb_cam" type="usb_cam_node" output="screen">
         <param name="video_device" value="$(arg camera_device)" />
-        <param name="image_width" value="640" />
-        <param name="image_height" value="480" />
+        <param name="image_width" value="1920" />
+        <param name="image_height" value="1080" />
         <param name="pixel_format" value="yuyv" />
         <param name="camera_frame_id" value="tracking_cam" />
         <param name="camera_name" value="$(arg camera_name)" />
