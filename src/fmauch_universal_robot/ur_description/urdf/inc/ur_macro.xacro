@@ -54,9 +54,13 @@
   <xacro:include filename="$(find ur_description)/urdf/inc/ur_transmissions.xacro" />
   <xacro:include filename="$(find ur_description)/urdf/inc/ur_common.xacro" />
 
+  <!-- robotiq_hande_gripper -->
+  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_hande_gripper.urdf.xacro" />
+
   <xacro:macro name="ur_robot" params="
     prefix
     z_height
+    gripper
     joint_limits_parameters_file
     kinematics_parameters_file
     physical_parameters_file
@@ -219,6 +223,29 @@
         <origin xyz="0.0 0.0 ${-0.5 * wrist_3_inertia_length}" rpy="0 0 0" />
       </xacro:cylinder_inertial>
     </link>
+    <xacro:if value="${gripper}">
+      <link name="gripper_root_link">
+        <visual>
+          <origin xyz="0 0 0.005" rpy="0 0 0"/>
+          <geometry>
+            <box size="0.01 0.01 0.01"/>
+          </geometry>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0.005" rpy="0 0 0"/>
+          <geometry>
+            <box size="0.01 0.01 0.01"/>
+          </geometry>
+        </collision>
+        <inertial>
+          <mass value="0.01" />
+          <origin xyz="0.0 0.0 0.0" />
+          <inertia ixx = "0.000001" ixy = "0.000000" ixz = "0.000000"
+              iyx = "0.000000" iyy = "0.000001" iyz = "0.000000"
+              izx = "0.000000" izy = "0.000000" izz = "0.000001" />
+        </inertial>
+      </link>
+    </xacro:if>
 
     <!-- joints: main serial chain -->
     <joint name="${prefix}base_link-base_link_inertia" type="fixed">
@@ -303,6 +330,18 @@
       </xacro:if>
       <dynamics damping="0" friction="0"/>
     </joint>
+    <xacro:if value="${gripper}">
+      <joint name="gripper_joint" type="fixed">
+        <parent link="${prefix}wrist_3_link" />
+        <child link = "gripper_root_link" />
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+      </joint>
+
+      <!-- gripper -->
+      <xacro:robotiq_hande_gripper prefix="" parent="gripper_root_link" >
+        <origin xyz="0.0 0 0.005" rpy="0 0 0"/>
+      </xacro:robotiq_hande_gripper>
+    </xacro:if>
 
     <!-- ROS-Industrial 'base' frame: base_link to UR 'Base' Coordinates transform -->
     <link name="${prefix}base"/>
