@@ -107,6 +107,9 @@ RUN source /opt/ros/melodic/setup.bash && \
     catkin build && \
     source devel/setup.bash
 
+#Install Gripper Controllers
+RUN sudo apt-get install ros-melodic-gripper-action-controller
+
 # Set up working directory and bashrc
 WORKDIR ${HOME}/workspace/
 RUN echo 'source /opt/ros/melodic/setup.bash' >> $HOME/.bashrc && \
