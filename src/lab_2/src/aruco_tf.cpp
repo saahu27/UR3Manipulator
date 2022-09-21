@@ -498,7 +498,7 @@ int main(int argc, char **argv) {
       calibrate_cam.broadcast_camToWorld();
       calibrate_cam.broadcast_allMarkersToWorld();
       calibrate_cam.lookup_allMarkersToWorld(5, tf_pickMarkerToWorld);
-      // calibrate_cam.lookup_allMarkersToWorld(5, tf_placeMarkerToWorld); 
+      // calibrate_cam.lookup_allMarkersToWorld(1, tf_placeMarkerToWorld); 
       pick.position.x = tf_pickMarkerToWorld.getOrigin()[0];
       pick.position.y = tf_pickMarkerToWorld.getOrigin()[1];
       pick.position.z = tf_pickMarkerToWorld.getOrigin()[2];
@@ -515,8 +515,12 @@ int main(int argc, char **argv) {
       // place.orientation.z = tf_placeMarkerToWorld.getRotation()[2];
       // place.orientation.w = tf_placeMarkerToWorld.getRotation()[3];
 
+      // ROS_INFO("x: %f",pick.position.x);
+      // ROS_INFO("y: %f",pick.position.y);
+      // ROS_INFO("z: %f",pick.position.z);
+
       pick_pub.publish(pick);
-      ROS_INFO("published");
+  
       // place_pub.publish(place);
       ros::spinOnce();
       rate.sleep();
