@@ -112,6 +112,7 @@ RUN sudo apt-get install ros-melodic-gripper-action-controller
 
 # Set up working directory and bashrc
 WORKDIR ${HOME}/workspace/
+RUN sudo chown user ${HOME}/workspace/src
 RUN echo 'source /opt/ros/melodic/setup.bash' >> $HOME/.bashrc && \
     echo 'source $HOME/workspace/devel/setup.bash' >> $HOME/.bashrc
 CMD /bin/bash

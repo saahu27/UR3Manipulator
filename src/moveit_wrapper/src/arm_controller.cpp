@@ -204,3 +204,39 @@ void ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vecto
   if(fraction >= 0.0) move_group_interface.execute(trajectory);
   else ROS_INFO("plan_failed");
 }
+
+void get_eef_positions(moveit::planning_interface::MoveGroupInterface &move_group_interface, std::string in_path, std::string out_path){
+  moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
+  move_group_interface.setStartState(start_state);
+
+  std::vector<double> joint_val;
+  std::fstream joint_file;
+  joint_file.open(in_path,std::ios::in);
+  std::ofstream eef_file;
+  eef_file.open(out_path);
+  if(joint_file.is_open()){
+    std::string tp;
+    while(getline(joint_file,tp)){
+      std::stringstream ss(tp);
+      while(ss){
+        double num;
+        ss >> num;
+        joint_val.push_back(num);
+      }
+      start_state.setJointGroupPositions("manipulator", joint_val);
+      const Eigen::Affine3d& link_pose = start_state.getGlobalLinkTransform("tool0");
+      Eigen::Vector3d cartesian_position = link_pose.translation();
+      for(int i = 0; i < cartesian_position.size(); i++){
+        if(i == cartesian_position.size()-1){
+          eef_file << cartesian_position[i] << std::endl;
+        }
+        else{
+          eef_file << cartesian_position[i] << ",";
+        }
+      }
+      joint_val.clear();
+    }
+  }
+  joint_file.close();
+  eef_file.close();
+}

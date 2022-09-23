@@ -104,4 +104,6 @@ namespace ArmController
      */
     void planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints, 
         std::string &reference_frame, moveit::planning_interface::MoveGroupInterface &move_group_interface);
+    
+    void get_eef_positions(moveit::planning_interface::MoveGroupInterface &move_group_interface, std::string in_path, std::string out_path);
 };

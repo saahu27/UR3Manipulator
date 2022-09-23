@@ -13,8 +13,8 @@ int main(){
     string word;
     double num;
     ofstream joint;
-    joint.open("joint.csv");
-    newfile.open("joint.yaml",ios::in);
+    joint.open("square_joint_val.txt");
+    newfile.open("square.txt",ios::in);
     if(newfile.is_open()){
         string tp;
         while(getline(newfile, tp)){
@@ -39,7 +39,7 @@ int main(){
                             joint << v[k] << endl;
                         }
                         else{
-                            joint << v[k] << ",";
+                            joint << v[k] << " ";
                         }
                     }
                 }
