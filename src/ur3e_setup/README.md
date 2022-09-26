@@ -20,3 +20,9 @@ roslaunch ur3e_moveit_config ur3e_moveit_planning_execution.launch
 # Start RViz
 roslaunch ur3e_moveit_config moveit_rviz.launch rviz_config:=$(rospack find ur3e_moveit_config)/launch/moveit.rviz
 ```
+
+rectified
+{"logitech_webcam":{"rot":[-0.35633811354637146,0.5798797011375427,0.6025930643081665,-0.38935157656669617],"trans":[0.9262733459472656,-0.331470251083374,0.7659745216369629]}}
+
+good
+{"logitech_webcam":{"rot":[-0.3696555197238922,0.6283388137817383,0.6154246926307678,-0.36251094937324524],"trans":[0.9403526186943054,-0.35773995518684387,0.8288238048553467]}}
