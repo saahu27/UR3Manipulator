@@ -19,10 +19,10 @@
   -->
   <!-- <xacro:arg name="z_height" default="$(arg z_h)" /> -->
   
-  <xacro:arg name="z_height" default="$(arg z_h)" />
+  <!-- <xacro:arg name="z_height" default="$(arg z_h)" /> -->
 
   <xacro:include filename="$(find ur_description)/urdf/inc/ur3e_macro.xacro" >
-    <xacro:arg name="z_height" value="$(arg z_height)" />
+    <!-- <xacro:arg name="z_height" value="$(arg z_height)" /> -->
   </xacro:include>
   
   <xacro:ur3e_robot prefix="" />

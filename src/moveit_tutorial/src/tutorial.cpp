@@ -52,9 +52,8 @@ int main(int argc, char **argv){
     pose_target.orientation.z = 0.0;
     pose_target.orientation.w = 0.707;
 
-    std::string reference_frame = "base_link";
-
     bool pose_plan_success;
+    std::string reference_frame = "base_link";
     pose_plan_success = ArmController::planToPoseTarget(planning_options, arm_move_group, pose_target, reference_frame, pose_plan);
 
     if(pose_plan_success){
@@ -77,6 +76,13 @@ int main(int argc, char **argv){
     std::vector<geometry_msgs::Pose> waypoints;
     waypoints.push_back(end_pose);
 
-    ArmController::planCartesianPath(start_pose, waypoints, reference_frame, arm_move_group);
+    moveit_msgs::RobotTrajectory trajectory;
+    trajectory = ArmController::planCartesianPath(start_pose, waypoints, reference_frame, arm_move_group);
+
+    std::string out_path = "/home/user/workspace/src/tutorial_eef_points.csv";
+
+    ArmController::extract_eef_from_trajectory(arm_move_group,out_path,trajectory);
+
+    arm_move_group.execute(trajectory);
 
 }

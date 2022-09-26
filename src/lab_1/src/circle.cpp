@@ -144,7 +144,10 @@ int main(int argc, char **argv)
             }
         }
 
-        ArmController::planCartesianPath(start_pose, waypoints, reference_frame, arm_move_group);
+        moveit_msgs::RobotTrajectory trajectory;
+        trajectory = ArmController::planCartesianPath(start_pose, waypoints, reference_frame, arm_move_group);
+
+        arm_move_group.execute(trajectory);
 
     } 
     

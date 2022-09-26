@@ -41,8 +41,7 @@ bool ArmController::planToNamedTarget(
 bool ArmController::planToPoseTarget(
     MoveitPlanning::PlanningOptions &options,
     moveit::planning_interface::MoveGroupInterface &move_group_interface,
-    geometry_msgs::Pose &target_pose, std::string &reference_frame,
-    moveit::planning_interface::MoveGroupInterface::Plan &plan) {
+    geometry_msgs::Pose &target_pose, std::string &reference_frame, moveit::planning_interface::MoveGroupInterface::Plan &plan) {
   move_group_interface.clearPoseTargets();
   move_group_interface.setPlanningTime(options.set_planning_time);
   move_group_interface.allowReplanning(options.allow_replanning);
@@ -160,7 +159,7 @@ void ArmController::addCollisionObjectToScene(
   planning_scene_msg.world.collision_objects.push_back(collision_obj);
 }
 
-void ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints,
+moveit_msgs::RobotTrajectory ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints,
   std::string &reference_frame, moveit::planning_interface::MoveGroupInterface &move_group_interface){
   moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
   const robot_state::JointModelGroup *joint_model_group = start_state.getJointModelGroup(move_group_interface.getName());
@@ -182,6 +181,71 @@ void ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vecto
 
   ROS_INFO("Planned %.2f%% of path...", (fraction * 100));
 
-  if(fraction >= 0.0) move_group_interface.execute(trajectory);
-  else ROS_INFO("plan_failed");
+  // if(fraction >= 0.0) move_group_interface.execute(trajectory);
+  // else ROS_INFO("plan_failed");
+
+  return trajectory;
+}
+
+void ArmController::get_eef_positions(moveit::planning_interface::MoveGroupInterface &move_group_interface, std::string in_path, std::string out_path){
+  moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
+  move_group_interface.setStartState(start_state);
+
+  std::vector<double> joint_val;
+  std::fstream joint_file;
+  joint_file.open(in_path,std::ios::in);
+  std::ofstream eef_file;
+  eef_file.open(out_path);
+  if(joint_file.is_open()){
+    std::string tp;
+    while(getline(joint_file,tp)){
+      std::stringstream ss(tp);
+      while(ss){
+        double num;
+        ss >> num;
+        joint_val.push_back(num);
+      }
+      start_state.setJointGroupPositions("manipulator", joint_val);
+      const Eigen::Affine3d& link_pose = start_state.getGlobalLinkTransform("tool0");
+      Eigen::Vector3d cartesian_position = link_pose.translation();
+      for(int i = 0; i < cartesian_position.size(); i++){
+        if(i == cartesian_position.size()-1){
+          eef_file << cartesian_position[i] << std::endl;
+        }
+        else{
+          eef_file << cartesian_position[i] << ",";
+        }
+      }
+      joint_val.clear();
+    }
+  }
+  joint_file.close();
+  eef_file.close();
+}
+
+void ArmController::extract_eef_from_trajectory(moveit::planning_interface::MoveGroupInterface &move_group_interface, std::string out_path,
+  moveit_msgs::RobotTrajectory trajectory){
+    moveit::core::RobotState robot_state(*move_group_interface.getCurrentState());
+    std::ofstream eef_file;
+    eef_file.open(out_path);
+
+    std::vector<double> joint_values;
+    std::vector<std::vector<double>> eef_values;
+
+    for(int i = 0; i < trajectory.joint_trajectory.points.size(); i++){
+        for(int j = 0; j < trajectory.joint_trajectory.points[i].positions.size(); j++){
+            joint_values.push_back(trajectory.joint_trajectory.points[i].positions[j]);
+        }
+        robot_state.setJointGroupPositions("manipulator", joint_values);
+        const Eigen::Affine3d& link_pose = robot_state.getGlobalLinkTransform("tool0");
+        Eigen::Vector3d cartesian_position = link_pose.translation();
+        for(int k = 0; k < cartesian_position.size(); k++){
+            if(k == cartesian_position.size()-1) eef_file << cartesian_position[k] << std::endl;
+            else eef_file << cartesian_position[k] << ",";
+        }
+
+        joint_values.clear();
+    }
+
+    eef_file.close();
 }

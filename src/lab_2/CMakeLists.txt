@@ -50,3 +50,6 @@ target_link_libraries(aruco_tf ${catkin_LIBRARIES})
 
 add_executable(scene src/scene.cpp)
 target_link_libraries(scene ${catkin_LIBRARIES})
+
+add_executable(pick_place src/pick_place.cpp)
+target_link_libraries(pick_place ${catkin_LIBRARIES})

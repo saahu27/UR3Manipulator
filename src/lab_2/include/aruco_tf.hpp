@@ -83,12 +83,13 @@ inline static void QuatConjugate(tf2::Quaternion &in) {
 class ArucoTF {
  public:
 
-  ArucoTF(bool load_calib, int num_samples)
+  ArucoTF(bool load_calib, int num_samples, bool record)
       : ls_markerToWorld(tfBuffer),
         load_calib(load_calib),
         num_samples(num_samples),
         samples_camToMarker(3, num_samples),
-        samples_markerToWorld(3, num_samples) {
+        samples_markerToWorld(3, num_samples),
+        recordCalibPoints(record) {
     aruco_transform_topic =
         "/logitech_webcam/fiducial_transforms";
   }
@@ -171,7 +172,7 @@ class ArucoTF {
   const int aruco_calib_target = 1;
   // Markers used for tracking
   const std::vector<int> aruco_track_targets = {5};
-  // Check if calibration done
+  // Check if calibration done#include "../include/aruco_tf.hpp"
   bool calib = false;
   // Reuse existing calibration
   bool load_calib;
@@ -215,4 +216,10 @@ class ArucoTF {
   void loadCalibFromFile();
   void verifyCalibration(const int &marker_id);
   Eigen::MatrixXf samples_camToMarker, samples_markerToWorld;
+
+  std::ofstream file;
+  std::ifstream myfile;
+  std::vector<std::vector<float>> calib_points_camToMarker, calib_points_markerToWorld;
+  void getCalibratedPoints();
+  bool recordCalibPoints;
 };
