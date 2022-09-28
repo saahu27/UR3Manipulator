@@ -43,3 +43,6 @@
 
 // Custom
 #include "../moveit_wrapper/moveit_planning_options.hpp"
+
+//Gripper
+#include <control_msgs/GripperCommandActionGoal.h>

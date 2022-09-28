@@ -10,6 +10,8 @@ int main(int argc, char **argv)
 
     double distance;
     double width;
+    
+    // Getting values from the launch file
     n.getParam("/scene_setup/distance", distance);
     n.getParam("/scene_setup/width", width);
 
@@ -31,7 +33,7 @@ int main(int argc, char **argv)
     table_pose.position.z = 0.40;
     ArmController::createCollisionObject(robot_table_obj, table_id, table_primitive, table_pose, table_type, table_dim, planning_frame);
 
-    // Wall Left <-- Change this as needed
+    // Wall Left
     moveit_msgs::CollisionObject wall_left_obj;
     std::string wall_left_id = "wall_left";
     shape_msgs::SolidPrimitive wall_left_primitive;
@@ -67,20 +69,6 @@ int main(int argc, char **argv)
     wall_right_pose.position.y = 0.0;
     wall_right_pose.position.z = 0.9;
     ArmController::createCollisionObject(wall_right_obj, wall_right_id, wall_right_primitive, wall_right_pose, wall_right_type, wall_right_dim, planning_frame);
-    
-
-
-    // moveit_msgs::CollisionObject square_obj;
-    // std::string square_id = "square";
-    // shape_msgs::SolidPrimitive square_primitive;
-    // std::vector<double> square_dim = {0.1, 0.1, 0.1};
-    // std::string square_type = "BOX";
-    // geometry_msgs::Pose square_pose;
-    // square_pose.orientation.w = 1.0;
-    // square_pose.position.x = 0.25; // 0.5;
-    // square_pose.position.y = 0.4;
-    // square_pose.position.z = 1.2;
-    // ArmController::createCollisionObject(square_obj, square_id, square_primitive, square_pose, square_type, square_dim, planning_frame);
 
     // Actual publishing
     ros::Publisher planning_scene_diff_publisher = n.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
@@ -89,8 +77,6 @@ int main(int argc, char **argv)
     ArmController::addCollisionObjectToScene(wall_left_obj, planning_scene_msg);
     ArmController::addCollisionObjectToScene(wall_front_obj, planning_scene_msg);
     ArmController::addCollisionObjectToScene(wall_right_obj, planning_scene_msg);
-    // ArmController::addCollisionObjectToScene(square_obj, planning_scene_msg);
-
 
     planning_scene_msg.is_diff = true;
     ros::Rate loop_rate(100);

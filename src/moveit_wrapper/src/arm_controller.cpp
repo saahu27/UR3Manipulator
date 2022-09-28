@@ -159,7 +159,7 @@ void ArmController::addCollisionObjectToScene(
   planning_scene_msg.world.collision_objects.push_back(collision_obj);
 }
 
-void ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints,
+moveit_msgs::RobotTrajectory ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints,
   std::string &reference_frame, moveit::planning_interface::MoveGroupInterface &move_group_interface){
   moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
   const robot_state::JointModelGroup *joint_model_group = start_state.getJointModelGroup(move_group_interface.getName());
@@ -181,62 +181,106 @@ void ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vecto
 
   ROS_INFO("Planned %.2f%% of path...", (fraction * 100));
 
-  std::vector<double> joint_values;
-  std::vector<std::vector<double>> eef_values;
+  // if(fraction >= 0.0) move_group_interface.execute(trajectory);
+  // else ROS_INFO("plan_failed");
 
-  for(int i = 0; i < trajectory.joint_trajectory.points.size(); i++){
-    for(int j = 0; j < trajectory.joint_trajectory.points[i].positions.size(); j++){
-      ROS_INFO("%f",trajectory.joint_trajectory.points[i].positions[j]);
-      joint_values.push_back(trajectory.joint_trajectory.points[i].positions[j]);
-    }
-    ROS_INFO("position %d printed", i);
-    start_state.setJointGroupPositions("manipulator", joint_values);
-    const Eigen::Affine3d& link_pose = start_state.getGlobalLinkTransform("tool0");
-    Eigen::Vector3d cartesian_position = link_pose.translation();
-    ROS_INFO("Printing eef pos");
-    for(int k = 0; k < cartesian_position.size(); k++){
-      ROS_INFO("%f", cartesian_position[k]);
-    }
-
-    joint_values.clear();
-  }
-
-  if(fraction >= 0.0) move_group_interface.execute(trajectory);
-  else ROS_INFO("plan_failed");
+  return trajectory;
 }
 
-void get_eef_positions(moveit::planning_interface::MoveGroupInterface &move_group_interface, std::string in_path, std::string out_path){
-  moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
-  move_group_interface.setStartState(start_state);
+// void ArmController::get_eef_positions(moveit::planning_interface::MoveGroupInterface &move_group_interface, std::string in_path, std::string out_path){
+//   moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
+//   move_group_interface.setStartState(start_state);
 
-  std::vector<double> joint_val;
-  std::fstream joint_file;
-  joint_file.open(in_path,std::ios::in);
-  std::ofstream eef_file;
-  eef_file.open(out_path);
-  if(joint_file.is_open()){
-    std::string tp;
-    while(getline(joint_file,tp)){
-      std::stringstream ss(tp);
-      while(ss){
-        double num;
-        ss >> num;
-        joint_val.push_back(num);
-      }
-      start_state.setJointGroupPositions("manipulator", joint_val);
-      const Eigen::Affine3d& link_pose = start_state.getGlobalLinkTransform("tool0");
-      Eigen::Vector3d cartesian_position = link_pose.translation();
-      for(int i = 0; i < cartesian_position.size(); i++){
-        if(i == cartesian_position.size()-1){
-          eef_file << cartesian_position[i] << std::endl;
+//   std::vector<double> joint_val;
+//   std::fstream joint_file;
+//   joint_file.open(in_path,std::ios::in);
+//   std::ofstream eef_file;
+//   eef_file.open(out_path);
+//   if(joint_file.is_open()){
+//     std::string tp;
+//     while(getline(joint_file,tp)){
+//       std::stringstream ss(tp);
+//       while(ss){
+//         double num;
+//         ss >> num;
+//         joint_val.push_back(num);
+//       }
+//       start_state.setJointGroupPositions("manipulator", joint_val);
+//       const Eigen::Affine3d& link_pose = start_state.getGlobalLinkTransform("tool0");
+//       Eigen::Vector3d cartesian_position = link_pose.translation();
+//       for(int i = 0; i < cartesian_position.size(); i++){
+//         if(i == cartesian_position.size()-1){
+//           eef_file << cartesian_position[i] << std::endl;
+//         }
+//         else{
+//           eef_file << cartesian_position[i] << ",";
+//         }
+//       }
+//       joint_val.clear();
+//     }
+//   }
+//   joint_file.close();
+//   eef_file.close();
+// }
+
+void ArmController::extract_eef_from_trajectory(moveit::planning_interface::MoveGroupInterface &move_group_interface, std::string out_path,
+  moveit_msgs::RobotTrajectory trajectory){
+    moveit::core::RobotState robot_state(*move_group_interface.getCurrentState());
+    std::ofstream eef_file;
+    eef_file.open(out_path);
+
+    std::vector<double> joint_values;
+    std::vector<std::vector<double>> eef_values;
+
+    for(int i = 0; i < trajectory.joint_trajectory.points.size(); i++){
+        for(int j = 0; j < trajectory.joint_trajectory.points[i].positions.size(); j++){
+            joint_values.push_back(trajectory.joint_trajectory.points[i].positions[j]);
         }
-        else{
-          eef_file << cartesian_position[i] << ",";
+        robot_state.setJointGroupPositions("manipulator", joint_values);
+        const Eigen::Affine3d& link_pose = robot_state.getGlobalLinkTransform("tool0");
+        Eigen::Vector3d cartesian_position = link_pose.translation();
+        for(int k = 0; k < cartesian_position.size(); k++){
+            if(k == cartesian_position.size()-1) eef_file << cartesian_position[k] << std::endl;
+            else eef_file << cartesian_position[k] << ",";
         }
-      }
-      joint_val.clear();
+
+        joint_values.clear();
     }
+
+    eef_file.close();
+}
+
+void ArmController::close_gripper(ros::NodeHandle *nh){
+  ros::Publisher left_gripper_pub = nh->advertise<control_msgs::GripperCommandActionGoal>("/left_gripper_controller/gripper_cmd/goal", 1);
+  ros::Publisher right_gripper_pub = nh->advertise<control_msgs::GripperCommandActionGoal>("/right_gripper_controller/gripper_cmd/goal", 1);
+
+  control_msgs::GripperCommandActionGoal gripper_cmd;
+  gripper_cmd.goal.command.position = 1.0;
+  gripper_cmd.goal.command.max_effort = 50.0;
+
+  double start_time = ros::Time::now().toSec();
+
+  ros::Rate loop_rate(10);
+  while(ros::Time::now().toSec() - start_time < 1.0){
+    left_gripper_pub.publish(gripper_cmd);
+    right_gripper_pub.publish(gripper_cmd);
+    loop_rate.sleep();
   }
-  joint_file.close();
-  eef_file.close();
+}
+
+void ArmController::open_gripper(ros::NodeHandle *nh){
+  ros::Publisher left_gripper_pub = nh->advertise<control_msgs::GripperCommandActionGoal>("/left_gripper_controller/gripper_cmd/goal", 1);
+  ros::Publisher right_gripper_pub = nh->advertise<control_msgs::GripperCommandActionGoal>("/right_gripper_controller/gripper_cmd/goal", 1);
+
+  control_msgs::GripperCommandActionGoal gripper_cmd;
+  gripper_cmd.goal.command.position = 0.0;
+
+  double start_time = ros::Time::now().toSec();
+
+  ros::Rate loop_rate(10);
+  while(ros::Time::now().toSec() - start_time < 1.0){
+    left_gripper_pub.publish(gripper_cmd);
+    right_gripper_pub.publish(gripper_cmd);
+    loop_rate.sleep();
+  }
 }

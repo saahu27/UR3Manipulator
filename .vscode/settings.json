@@ -68,8 +68,6 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "bit": "cpp",
-        "filesystem": "cpp",
-        "core": "cpp"
+        "bit": "cpp"
     }
 }

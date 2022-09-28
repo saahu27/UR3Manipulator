@@ -181,11 +181,14 @@ int main(int argc, char **argv)
             waypoints.push_back(next_pose4);
         }
 
-        ArmController::planCartesianPath(start_pose, waypoints, reference_frame, arm_move_group);
-        
-        std::string in_path = "/home/user/workspace/src/square_joint_val.txt";
-        std::string out_path = "/home/user/workspace/src/square_eef_pos.csv";
-        ArmController::get_eef_positions(arm_move_group,in_path,out_path);
+        moveit_msgs::RobotTrajectory trajectory;
+        trajectory = ArmController::planCartesianPath(start_pose, waypoints, reference_frame, arm_move_group);
+
+        std::string out_path = "/home/user/workspace/src/square_eef_points.csv";
+
+        ArmController::extract_eef_from_trajectory(arm_move_group,out_path,trajectory);
+
+        arm_move_group.execute(trajectory);
         
 
     } 
