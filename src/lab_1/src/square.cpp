@@ -13,11 +13,13 @@ int main(int argc, char **argv)
     double z_c;
     double side;
     std::string plane;
+
     n.getParam("/square/side", side);
     n.getParam("/square/x_c", x_c);
     n.getParam("/square/y_c", y_c);
     n.getParam("/square/z_c", z_c);
     n.getParam("/square/plane", plane);
+    
 
 
     // Create PlanningOptions
@@ -188,8 +190,11 @@ int main(int argc, char **argv)
 
         ArmController::extract_eef_from_trajectory(arm_move_group,out_path,trajectory);
 
+        n.setParam("/record_pose", true);
+
         arm_move_group.execute(trajectory);
-        
+
+        n.setParam("/record_pose", false);
 
     } 
     

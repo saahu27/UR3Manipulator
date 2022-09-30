@@ -12,4 +12,5 @@
         <param name="z_c" value="$(arg z_c)" />
         <param name="plane" value="$(arg plane)" />
     </node>
+    <rosparam  file="$(find lab_1)/config/params.yaml" command="load" />
 </launch>

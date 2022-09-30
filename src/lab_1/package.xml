@@ -6,12 +6,14 @@
 
     <!-- One maintainer tag required, multiple allowed, one person per tag -->
     <maintainer email="rutvik08@umd.edu">Rutvik Kevadiya</maintainer>
+    <maintainer email="sahruday@umd.edu">Sahruday Patti</maintainer>
 
     <!-- One license tag required, multiple allowed, one license per tag -->
     <license>GPLv3</license>
 
     <!-- Author tags are optional, multiple are allowed, one per tag -->
     <author email="rutvik08@umd.edu">Rutvik Kevadiya</author>
+    <author email="sahruday@umd.edu">Sahruday Patti</author>
 
     <buildtool_depend>catkin</buildtool_depend>
 
