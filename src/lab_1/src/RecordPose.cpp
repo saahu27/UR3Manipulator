@@ -33,6 +33,8 @@ int main(int argc, char **argv)
         current_pose = arm_move_group.getCurrentPose().pose;
         eef_file << current_pose.position.x << "," << current_pose.position.y << "," << current_pose.position.z << std::endl;
         nh.getParam("/record_pose", record_pose);
+        std::cout<< current_pose.position.x << "," << current_pose.position.y << "," << current_pose.position.z << std::endl;
+        rate.sleep();
     }
     eef_file.close();
 
