@@ -79,13 +79,8 @@ int main(int argc, char **argv){
     moveit_msgs::RobotTrajectory trajectory;
     trajectory = ArmController::planCartesianPath(start_pose, waypoints, reference_frame, arm_move_group);
 
-    std::string out_path = "/home/user/workspace/src/tutorial_eef_points.csv";
-
-    ArmController::extract_eef_from_trajectory(arm_move_group,out_path,trajectory);
-
+    n.setParam("/record_pose", true);
     arm_move_group.execute(trajectory);
-
-    ArmController::close_gripper(&n);
-    ArmController::open_gripper(&n);
+    n.setParam("/record_pose", false);
 
 }

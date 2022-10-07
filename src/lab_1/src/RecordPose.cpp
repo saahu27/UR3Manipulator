@@ -1,4 +1,4 @@
-#include "../include/square.hpp"
+#include <moveit_wrapper/arm_controller.hpp>
 
 int main(int argc, char **argv)
 {
@@ -7,8 +7,8 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(4);
     spinner.start();
     ros::NodeHandle nh;
-    ros::Rate rate(1);
-    std::string out_path = "/home/user/workspace/src/square_eef_points_trajectory.csv";
+    ros::Rate rate(2);
+    std::string out_path = "/home/user/workspace/src/tutorial_pose.csv";
 
     bool record_pose;
     int flag = 0;   
