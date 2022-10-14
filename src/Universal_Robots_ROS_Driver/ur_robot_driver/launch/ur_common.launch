@@ -24,11 +24,13 @@
   <arg name="headless_mode" default="false" doc="Automatically send URScript to robot to execute. On e-Series this does require the robot to be in 'remote-control' mode. With this, the URCap is not needed on the robot."/>
   <arg name="ur_hardware_interface_node_required" default="true" doc="Shut down ros environment if ur_hardware_interface-node dies."/>
   <arg name="z_height" default="0.0" />
+  <arg name="gripper" default="false" />
 
   <!-- robot model -->
   <include file="$(arg robot_description_file)">
     <arg name="kinematics_params" value="$(arg kinematics_config)"/>
     <arg name="z_height" value="$(arg z_height)" />
+    <arg name="gripper" value="$(arg gripper)" />
   </include>
 
   <!-- Convert joint states to /tf tranforms -->
