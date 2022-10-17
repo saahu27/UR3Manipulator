@@ -81,8 +81,6 @@ int main(int argc, char **argv){
 
     std::string out_path = "/home/user/workspace/src/tutorial_eef_points.csv";
 
-    ArmController::extract_eef_from_trajectory(arm_move_group,out_path,trajectory);
-
     arm_move_group.execute(trajectory);
 
     ArmController::close_gripper(&n);

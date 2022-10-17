@@ -188,8 +188,6 @@ int main(int argc, char **argv)
 
         std::string out_path = "/home/user/workspace/src/square_eef_points.csv";
 
-        ArmController::extract_eef_from_trajectory(arm_move_group,out_path,trajectory);
-
         n.setParam("/record_pose", true);
 
         arm_move_group.execute(trajectory);

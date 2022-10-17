@@ -53,3 +53,6 @@ target_link_libraries(scene ${catkin_LIBRARIES})
 
 add_executable(pick_place src/pick_place.cpp)
 target_link_libraries(pick_place ${catkin_LIBRARIES})
+
+add_executable(pick_place_scene src/pick_place_scene.cpp)
+target_link_libraries(pick_place_scene ${catkin_LIBRARIES})
