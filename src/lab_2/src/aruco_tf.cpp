@@ -197,13 +197,6 @@ void ArucoTF::takeCalibrationSamples() {
   ROS_INFO_STREAM("Move robot to pose...");
   ROS_INFO_STREAM("Press ENTER to record sample.");
   
-  if(ArucoTF::recordCalibPoints){
-    std::string calib_points_path = ros::package::getPath("lab_2");
-    calib_points_path += "/calib_points.txt";
-    ArucoTF::file.open(calib_points_path);
-  }
-  
-
   while (sample_cnt < num_samples) {
     ROS_INFO_STREAM("Pose: " << sample_cnt + 1 << "/"
                         << ArucoTF::num_samples);
@@ -223,21 +216,9 @@ void ArucoTF::takeCalibrationSamples() {
                         ArucoTF::tform_markerToWorld.transform.translation.z)
             .transpose();
 
-    if(ArucoTF::recordCalibPoints){
-      ArucoTF::file << ArucoTF::tform_camToMarker.translation.x << " " 
-        << ArucoTF::tform_camToMarker.translation.y << " " 
-        << ArucoTF::tform_camToMarker.translation.z << " ";        
-    
-      ArucoTF::file << ArucoTF::tform_markerToWorld.transform.translation.x << " " 
-          << ArucoTF::tform_markerToWorld.transform.translation.y << " " 
-          << ArucoTF::tform_markerToWorld.transform.translation.z << "\n";
-    }
-    
-
     sample_cnt++;
   }
   ROS_INFO_ONCE("Calibration samples gathered");
-  if(ArucoTF::recordCalibPoints) ArucoTF::file.close();
 }
 
 /**
@@ -364,67 +345,6 @@ void ArucoTF::lookup_allMarkersToWorld(const int &marker_id,
   }
 }
 
-void ArucoTF::getCalibratedPoints(){
-  std::string calib_points_path = ros::package::getPath("lab_2");
-  calib_points_path += "/calib_points.txt";
-  ArucoTF::myfile.open(calib_points_path);
-
-  float x;
-  float y;
-  float z;
-  int count = 0;
-  while(ArucoTF::myfile){
-    // std::getline(ArucoTF::myfile,myline);
-    if(count < ArucoTF::num_samples){
-      ArucoTF::myfile >> x;
-      ArucoTF::myfile >> y;
-      ArucoTF::myfile >> z;
-      std::cout << x << " " << y << " " << z << std::endl;
-      ArucoTF::calib_points_camToMarker.push_back({x,y,z});
-      ArucoTF::myfile >> x;
-      ArucoTF::myfile >> y;
-      ArucoTF::myfile >> z;
-      std::cout << x << " " << y << " " << z << std::endl;
-      ArucoTF::calib_points_markerToWorld.push_back({x,y,z});
-      count++;
-    }
-    else break;
-  }
-  ArucoTF::myfile.close();
-
-  std::string calib_points2_path = ros::package::getPath("lab_2");
-  calib_points2_path += "/calib_points2.txt";
-  ArucoTF::file.open(calib_points2_path);
-
-  for(int i = 0; i < ArucoTF::calib_points_camToMarker.size(); i++){
-    geometry_msgs::Transform tform_camToNewMarker;
-    tform_camToNewMarker.translation.x = ArucoTF::calib_points_camToMarker[i][0];
-    tform_camToNewMarker.translation.y = ArucoTF::calib_points_camToMarker[i][1];
-    tform_camToNewMarker.translation.z = ArucoTF::calib_points_camToMarker[i][2];
-    
-    tf2::Transform tf_camToNewMarker;
-    tf2::fromMsg(tform_camToNewMarker, tf_camToNewMarker);
-
-    // Transform to world frame
-    tf2::Transform tf_newMarkerToWorld;
-    tf_newMarkerToWorld = ArucoTF::tf_camToWorld * tf_camToNewMarker;
-    tf_newMarkerToWorld.getRotation().normalize();
-
-    ArucoTF::file << tf_newMarkerToWorld.getOrigin()[0] << " " 
-        << tf_newMarkerToWorld.getOrigin()[1] << " " 
-        << tf_newMarkerToWorld.getOrigin()[2] << " ";
-
-    ArucoTF::file << ArucoTF::calib_points_markerToWorld[i][0] << " " 
-        << ArucoTF::calib_points_markerToWorld[i][1] << " " 
-        << ArucoTF::calib_points_markerToWorld[i][2] << "\n";
-  }
-
-  ArucoTF::file.close();
-
-
-
-}
-
 /**
  * @brief Compare calibration marker to ideal transformation
  *
@@ -460,13 +380,11 @@ int main(int argc, char **argv) {
   int num_poses;
   bool record;
   // Load external calibration file
-  n.param<bool>("load_calibration", load_calib, true);
+  n.param<bool>("load_calibration", load_calib, false);
   // Verify calibration
   n.param<bool>("verify_calibration", verify_calib, false);
   // Number of poses to use for calibration
   n.param<int>("num_poses", num_poses, 2);
-
-  n.param<bool>("record_calib_points", record, false);
 
   ROS_INFO("----------------------------------------------------------");
   // Set number of poses to capture for calibration
@@ -474,10 +392,9 @@ int main(int argc, char **argv) {
   // Camera calibration
   if (!calibrate_cam.load_calib) {
     calibrate_cam.takeCalibrationSamples();
-    if(!calibrate_cam.recordCalibPoints) calibrate_cam.estimateTransformPointToPoint();
+    calibrate_cam.estimateTransformPointToPoint();
   } else {
     calibrate_cam.loadCalibFromFile();
-    calibrate_cam.getCalibratedPoints();
   }
   ROS_INFO("----------------------------------------------------------");
   if (verify_calib) {
@@ -493,38 +410,36 @@ int main(int argc, char **argv) {
   geometry_msgs::Pose pick;
   // geometry_msgs::Pose place;
 
-  if(!calibrate_cam.recordCalibPoints){
-    while (n.ok()) {
-      calibrate_cam.broadcast_camToWorld();
-      calibrate_cam.broadcast_allMarkersToWorld();
-      calibrate_cam.lookup_allMarkersToWorld(5, tf_pickMarkerToWorld);
-      // calibrate_cam.lookup_allMarkersToWorld(1, tf_placeMarkerToWorld); 
-      pick.position.x = tf_pickMarkerToWorld.getOrigin()[0];
-      pick.position.y = tf_pickMarkerToWorld.getOrigin()[1];
-      pick.position.z = tf_pickMarkerToWorld.getOrigin()[2];
-      pick.orientation.x = tf_pickMarkerToWorld.getRotation()[0];
-      pick.orientation.y = tf_pickMarkerToWorld.getRotation()[1];
-      pick.orientation.z = tf_pickMarkerToWorld.getRotation()[2];
-      pick.orientation.w = tf_pickMarkerToWorld.getRotation()[3]; 
+  while (n.ok()) {
+    calibrate_cam.broadcast_camToWorld();
+    calibrate_cam.broadcast_allMarkersToWorld();
+    calibrate_cam.lookup_allMarkersToWorld(5, tf_pickMarkerToWorld);
+    // calibrate_cam.lookup_allMarkersToWorld(1, tf_placeMarkerToWorld); 
+    pick.position.x = tf_pickMarkerToWorld.getOrigin()[0];
+    pick.position.y = tf_pickMarkerToWorld.getOrigin()[1];
+    pick.position.z = tf_pickMarkerToWorld.getOrigin()[2];
+    pick.orientation.x = tf_pickMarkerToWorld.getRotation()[0];
+    pick.orientation.y = tf_pickMarkerToWorld.getRotation()[1];
+    pick.orientation.z = tf_pickMarkerToWorld.getRotation()[2];
+    pick.orientation.w = tf_pickMarkerToWorld.getRotation()[3]; 
 
-      // place.position.x = tf_placeMarkerToWorld.getOrigin()[0];
-      // place.position.y = tf_placeMarkerToWorld.getOrigin()[1];
-      // place.position.z = tf_placeMarkerToWorld.getOrigin()[2];
-      // place.orientation.x = tf_placeMarkerToWorld.getRotation()[0];
-      // place.orientation.y = tf_placeMarkerToWorld.getRotation()[1];
-      // place.orientation.z = tf_placeMarkerToWorld.getRotation()[2];
-      // place.orientation.w = tf_placeMarkerToWorld.getRotation()[3];
+    // place.position.x = tf_placeMarkerToWorld.getOrigin()[0];
+    // place.position.y = tf_placeMarkerToWorld.getOrigin()[1];
+    // place.position.z = tf_placeMarkerToWorld.getOrigin()[2];
+    // place.orientation.x = tf_placeMarkerToWorld.getRotation()[0];
+    // place.orientation.y = tf_placeMarkerToWorld.getRotation()[1];
+    // place.orientation.z = tf_placeMarkerToWorld.getRotation()[2];
+    // place.orientation.w = tf_placeMarkerToWorld.getRotation()[3];
 
-      // ROS_INFO("x: %f",pick.position.x);
-      // ROS_INFO("y: %f",pick.position.y);
-      // ROS_INFO("z: %f",pick.position.z);
+    // ROS_INFO("x: %f",pick.position.x);
+    // ROS_INFO("y: %f",pick.position.y);
+    // ROS_INFO("z: %f",pick.position.z);
 
-      pick_pub.publish(pick);
-  
-      // place_pub.publish(place);
-      ros::spinOnce();
-      rate.sleep();
-    }
+    pick_pub.publish(pick);
+
+    // place_pub.publish(place);
+    ros::spinOnce();
+    rate.sleep();
   }
 
 

@@ -46,7 +46,8 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends --all
     tzdata \
     xclip \
     # mesa-utils \
-    x11proto-gl-dev && \
+    x11proto-gl-dev \
+    ros-melodic-gripper-action-controller && \
     sudo rm -rf /var/lib/apt/lists/*
 
 # Setup tmux config
