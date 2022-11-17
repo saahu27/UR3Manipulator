@@ -86,8 +86,10 @@ int main(int argc, char **argv)
     // Actual publishing
     ros::Publisher planning_scene_diff_publisher = n.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
     moveit_msgs::PlanningScene planning_scene_msg;
+    moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
     ArmController::addCollisionObjectToScene(robot_table_obj, planning_scene_msg);
     ArmController::addCollisionObjectToScene(cube_obj, planning_scene_msg);
+    ArmController::addCollisionObjectToScene1(cube_obj, planning_scene_interface);
     // ArmController::addCollisionObjectToScene(wall_left_obj, planning_scene_msg);
     // ArmController::addCollisionObjectToScene(wall_front_obj, planning_scene_msg);
     // ArmController::addCollisionObjectToScene(wall_right_obj, planning_scene_msg);

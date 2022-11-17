@@ -159,6 +159,18 @@ void ArmController::addCollisionObjectToScene(
   planning_scene_msg.world.collision_objects.push_back(collision_obj);
 }
 
+void ArmController::addCollisionObjectToScene1(
+    moveit_msgs::CollisionObject &collision_obj, moveit::planning_interface::PlanningSceneInterface &planning_scene_interface){
+  ROS_INFO("Adding object to scene: %s", collision_obj.id.c_str());
+
+  collision_obj.operation = collision_obj.ADD;
+  // planning_scene_msg.world.collision_objects.clear();
+  std::vector<moveit_msgs::CollisionObject> collision_objects;
+  collision_objects.push_back(collision_obj);
+  planning_scene_interface.addCollisionObjects(collision_objects);
+}
+
+
 moveit_msgs::RobotTrajectory ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints,
   std::string &reference_frame, moveit::planning_interface::MoveGroupInterface &move_group_interface){
   moveit::core::RobotState start_state(*move_group_interface.getCurrentState());

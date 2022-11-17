@@ -24,6 +24,8 @@ int main(int argc, char **argv)
     // Create instance of MoveGroupInterface for given joint group
     moveit::planning_interface::MoveGroupInterface arm_move_group("manipulator");
 
+    
+
     int flag = 0;
 
     std::string planning_frame = arm_move_group.getPlanningFrame();
@@ -64,7 +66,7 @@ int main(int argc, char **argv)
     geometry_msgs::Pose pose2;
     pose2.position.x = 0.3;
     pose2.position.y = 0.3;
-    pose2.position.z = 0.805;
+    pose2.position.z = 0.85;
     pose2.orientation.x = 0.707;
     pose2.orientation.y = 0.707;
     pose2.orientation.z = 0.0;
@@ -75,25 +77,42 @@ int main(int argc, char **argv)
     moveit_msgs::RobotTrajectory trajectory;
     trajectory = ArmController::planCartesianPath(start_pose, waypoints, reference_frame, arm_move_group);
     arm_move_group.execute(trajectory);
+    
     ArmController::close_gripper(&n);
     arm_move_group.attachObject("cube");
+    
 
 
     geometry_msgs::Pose pose3;
 
-    pose3.position.x = 0.0;
-    pose3.position.y = 0.0;
-    pose3.position.z = 0.85;
+    pose3.position.x = 0.3;
+    pose3.position.y = 0.3;
+    pose3.position.z = 1.1;
     pose3.orientation.x = 0.707;
     pose3.orientation.y = 0.707;
     pose3.orientation.z = 0.0;
     pose3.orientation.w = 0.0;
+    std::vector<geometry_msgs::Pose> waypoints2;
+    waypoints2.push_back(pose3);
+    geometry_msgs::Pose start_pose1 = arm_move_group.getCurrentPose().pose;
+    moveit_msgs::RobotTrajectory trajectory2;
+    trajectory2 = ArmController::planCartesianPath(start_pose1, waypoints2, reference_frame, arm_move_group);
+    arm_move_group.execute(trajectory2);
 
+    geometry_msgs::Pose pose4;
+
+    pose4.position.x = -0.1;
+    pose4.position.y = 0.1;
+    pose4.position.z = 0.9;
+    pose4.orientation.x = 0.707;
+    pose4.orientation.y = 0.707;
+    pose4.orientation.z = 0.0;
+    pose4.orientation.w = 0.0;
     // Create instance of Plan
     moveit::planning_interface::MoveGroupInterface::Plan plan_pose3;
 
     bool plan_success3;
-    plan_success3 = ArmController::planToPoseTarget(planning_options,arm_move_group,pose3,reference_frame,plan_pose3);
+    plan_success3 = ArmController::planToPoseTarget(planning_options,arm_move_group,pose4,reference_frame,plan_pose3);
 
     if(plan_success3){
         ROS_INFO("pose 1 plan succeeded");
@@ -108,4 +127,5 @@ int main(int argc, char **argv)
         flag = 0;
     }
     ArmController::open_gripper(&n);
+    arm_move_group.detachObject("cube");
 }

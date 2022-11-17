@@ -98,6 +98,9 @@ namespace ArmController
     void addCollisionObjectToScene(
         moveit_msgs::CollisionObject &collision_obj, moveit_msgs::PlanningScene &planning_scene_msg);
     
+    void addCollisionObjectToScene1(
+        moveit_msgs::CollisionObject &collision_obj, moveit::planning_interface::PlanningSceneInterface &planning_scene_interface);
+
     /**
      * @brief plan a cartesian path from start_pose to end_pose
      * 
