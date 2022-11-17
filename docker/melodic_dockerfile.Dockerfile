@@ -14,10 +14,10 @@ ENV QT_X11_NO_MITSHM=1 \
     XDG_RUNTIME_DIR=/run/user/1000 \
     TZ=America/New_York 
 
-# ENV NVIDIA_VISIBLE_DEVICES \
-#     ${NVIDIA_VISIBLE_DEVICES:-all}
-# ENV NVIDIA_DRIVER_CAPABILITIES \
-#     ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
+ENV NVIDIA_VISIBLE_DEVICES \
+     ${NVIDIA_VISIBLE_DEVICES:-all}
+ENV NVIDIA_DRIVER_CAPABILITIES \
+    ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
 
 USER $USER
 WORKDIR $HOME
@@ -76,8 +76,9 @@ RUN sudo apt-get update && sudo apt-get install -y \
     ros-melodic-aruco-detect \
     libeigen3-dev
 
+
 # Install nvidia drivers
-# RUN sudo apt-get install -y nvidia-driver-510
+#RUN sudo apt-get install -y nvidia-driver-520-open
 
 # Setup ROS workspace directory
 RUN mkdir -p $HOME/workspace/src && \
@@ -112,4 +113,8 @@ RUN source /opt/ros/melodic/setup.bash && \
 WORKDIR ${HOME}/workspace/
 RUN echo 'source /opt/ros/melodic/setup.bash' >> $HOME/.bashrc && \
     echo 'source $HOME/workspace/devel/setup.bash' >> $HOME/.bashrc
+
+RUN sudo add-apt-repository ppa:kisak/kisak-mesa -y
+RUN sudo apt update
+#RUN sudo apt upgrade -y
 CMD /bin/bash
