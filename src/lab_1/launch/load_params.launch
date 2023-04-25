@@ -1,3 +1,0 @@
-<launch>
-    <rosparam  file="$(find lab_1)/config/params.yaml" command="load" />
-</launch>

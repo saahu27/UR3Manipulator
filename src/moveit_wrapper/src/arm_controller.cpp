@@ -159,18 +159,6 @@ void ArmController::addCollisionObjectToScene(
   planning_scene_msg.world.collision_objects.push_back(collision_obj);
 }
 
-void ArmController::addCollisionObjectToScene1(
-    moveit_msgs::CollisionObject &collision_obj, moveit::planning_interface::PlanningSceneInterface &planning_scene_interface){
-  ROS_INFO("Adding object to scene: %s", collision_obj.id.c_str());
-
-  collision_obj.operation = collision_obj.ADD;
-  // planning_scene_msg.world.collision_objects.clear();
-  std::vector<moveit_msgs::CollisionObject> collision_objects;
-  collision_objects.push_back(collision_obj);
-  planning_scene_interface.addCollisionObjects(collision_objects);
-}
-
-
 moveit_msgs::RobotTrajectory ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints,
   std::string &reference_frame, moveit::planning_interface::MoveGroupInterface &move_group_interface){
   moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
@@ -200,36 +188,61 @@ moveit_msgs::RobotTrajectory ArmController::planCartesianPath(geometry_msgs::Pos
 }
 
 void ArmController::close_gripper(ros::NodeHandle *nh){
-  ros::Publisher left_gripper_pub = nh->advertise<control_msgs::GripperCommandActionGoal>("/left_gripper_controller/gripper_cmd/goal", 1);
-  ros::Publisher right_gripper_pub = nh->advertise<control_msgs::GripperCommandActionGoal>("/right_gripper_controller/gripper_cmd/goal", 1);
 
-  control_msgs::GripperCommandActionGoal gripper_cmd;
-  gripper_cmd.goal.command.position = 1.0;
-  gripper_cmd.goal.command.max_effort = 50.0;
+  ros::Publisher gripper_pub = nh->advertise<std_msgs::String>("/gripper_command", 1);
 
+  std_msgs::String gripper_cmd; 
+  gripper_cmd.data = 'c';
   double start_time = ros::Time::now().toSec();
-
   ros::Rate loop_rate(10);
-  while(ros::Time::now().toSec() - start_time < 1.0){
-    left_gripper_pub.publish(gripper_cmd);
-    right_gripper_pub.publish(gripper_cmd);
+
+  while(ros::Time::now().toSec() - start_time < 3.0){
+    gripper_pub.publish(gripper_cmd);
     loop_rate.sleep();
   }
 }
 
 void ArmController::open_gripper(ros::NodeHandle *nh){
-  ros::Publisher left_gripper_pub = nh->advertise<control_msgs::GripperCommandActionGoal>("/left_gripper_controller/gripper_cmd/goal", 1);
-  ros::Publisher right_gripper_pub = nh->advertise<control_msgs::GripperCommandActionGoal>("/right_gripper_controller/gripper_cmd/goal", 1);
 
-  control_msgs::GripperCommandActionGoal gripper_cmd;
-  gripper_cmd.goal.command.position = 0.0;
+  ros::Publisher gripper_pub = nh->advertise<std_msgs::String>("/gripper_command", 1);
 
+  std_msgs::String gripper_cmd; 
+  gripper_cmd.data = 'o';
   double start_time = ros::Time::now().toSec();
-
   ros::Rate loop_rate(10);
-  while(ros::Time::now().toSec() - start_time < 1.0){
-    left_gripper_pub.publish(gripper_cmd);
-    right_gripper_pub.publish(gripper_cmd);
+
+  while(ros::Time::now().toSec() - start_time < 3.0){
+    gripper_pub.publish(gripper_cmd);
+    loop_rate.sleep();
+  }
+}
+
+void ArmController::reset_gripper(ros::NodeHandle *nh){
+
+  ros::Publisher gripper_pub = nh->advertise<std_msgs::String>("/gripper_command", 1);
+
+  std_msgs::String gripper_cmd; 
+  gripper_cmd.data = 'r';
+  double start_time = ros::Time::now().toSec();
+  ros::Rate loop_rate(10);
+
+  while(ros::Time::now().toSec() - start_time < 3.0){
+    gripper_pub.publish(gripper_cmd);
+    loop_rate.sleep();
+  }
+}
+
+void ArmController::activate_gripper(ros::NodeHandle *nh){
+
+  ros::Publisher gripper_pub = nh->advertise<std_msgs::String>("/gripper_command", 1);
+   
+  std_msgs::String gripper_cmd; 
+  gripper_cmd.data = 'a';
+  double start_time = ros::Time::now().toSec();
+  ros::Rate loop_rate(10);
+
+  while(ros::Time::now().toSec() - start_time < 3.0){
+    gripper_pub.publish(gripper_cmd);
     loop_rate.sleep();
   }
 }

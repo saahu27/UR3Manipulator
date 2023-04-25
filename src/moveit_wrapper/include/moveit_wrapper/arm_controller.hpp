@@ -98,22 +98,18 @@ namespace ArmController
     void addCollisionObjectToScene(
         moveit_msgs::CollisionObject &collision_obj, moveit_msgs::PlanningScene &planning_scene_msg);
     
-    void addCollisionObjectToScene1(
-        moveit_msgs::CollisionObject &collision_obj, moveit::planning_interface::PlanningSceneInterface &planning_scene_interface);
-
     /**
      * @brief plan a cartesian path from start_pose to end_pose
      * 
      */
     moveit_msgs::RobotTrajectory planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints, 
         std::string &reference_frame, moveit::planning_interface::MoveGroupInterface &move_group_interface);
-    
-    // void get_eef_positions(moveit::planning_interface::MoveGroupInterface &move_group_interface, std::string in_path, std::string out_path);
-
-    void extract_eef_from_trajectory(moveit::planning_interface::MoveGroupInterface &move_group_interface, std::string out_path,
-        moveit_msgs::RobotTrajectory trajectory);
 
     void close_gripper(ros::NodeHandle *nh);
 
     void open_gripper(ros::NodeHandle *nh);
+
+    void reset_gripper(ros::NodeHandle *nh);
+
+    void activate_gripper(ros::NodeHandle *nh);
 };

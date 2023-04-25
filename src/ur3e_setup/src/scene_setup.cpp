@@ -33,66 +33,10 @@ int main(int argc, char **argv)
     table_pose.position.z = 0.383;
     ArmController::createCollisionObject(robot_table_obj, table_id, table_primitive, table_pose, table_type, table_dim, planning_frame);
 
-    // Table
-    moveit_msgs::CollisionObject cube_obj;
-    std::string cube_id = "cube";
-    shape_msgs::SolidPrimitive cube_primitive;
-    std::vector<double> cube_dim = {0.05, 0.05, 0.05};
-    std::string cube_type = "BOX";
-    geometry_msgs::Pose cube_pose;
-    cube_pose.orientation.w = 1.0;
-    cube_pose.position.x = 0.3;
-    cube_pose.position.y = 0.3;
-    cube_pose.position.z = 0.8;
-    ArmController::createCollisionObject(cube_obj, cube_id, cube_primitive, cube_pose, cube_type, cube_dim, planning_frame);
-
-    // // Wall Left
-    // moveit_msgs::CollisionObject wall_left_obj;
-    // std::string wall_left_id = "wall_left";
-    // shape_msgs::SolidPrimitive wall_left_primitive;
-    // std::vector<double> wall_left_dim = {0.1, width, 1.80};
-    // std::string wall_left_type = "BOX";
-    // geometry_msgs::Pose wall_left_pose;
-    // wall_left_pose.orientation.w = 1.0;
-    // wall_left_pose.position.x = -distance; //-0.5;
-    // wall_left_pose.position.y = 0.0;
-    // wall_left_pose.position.z = 0.9;
-    // ArmController::createCollisionObject(wall_left_obj, wall_left_id, wall_left_primitive, wall_left_pose, wall_left_type , wall_left_dim, planning_frame);
-
-    // moveit_msgs::CollisionObject wall_front_obj;
-    // std::string wall_front_id = "wall_front";
-    // shape_msgs::SolidPrimitive wall_front_primitive;
-    // std::vector<double> wall_front_dim = {width, 0.1, 1.80};
-    // std::string wall_front_type = "BOX";
-    // geometry_msgs::Pose wall_front_pose;
-    // wall_front_pose.orientation.w = 1.0;
-    // wall_front_pose.position.x = 0.0;
-    // wall_front_pose.position.y = distance; // 0.45;
-    // wall_front_pose.position.z = 0.9;
-    // ArmController::createCollisionObject(wall_front_obj, wall_front_id, wall_front_primitive, wall_front_pose, wall_front_type, wall_front_dim, planning_frame);
-    
-    // moveit_msgs::CollisionObject wall_right_obj;
-    // std::string wall_right_id = "wall_right";
-    // shape_msgs::SolidPrimitive wall_right_primitive;
-    // std::vector<double> wall_right_dim = {0.1, width, 1.80};
-    // std::string wall_right_type = "BOX";
-    // geometry_msgs::Pose wall_right_pose;
-    // wall_right_pose.orientation.w = 1.0;
-    // wall_right_pose.position.x = distance; // 0.5;
-    // wall_right_pose.position.y = 0.0;
-    // wall_right_pose.position.z = 0.9;
-    // ArmController::createCollisionObject(wall_right_obj, wall_right_id, wall_right_primitive, wall_right_pose, wall_right_type, wall_right_dim, planning_frame);
-
     // Actual publishing
     ros::Publisher planning_scene_diff_publisher = n.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
     moveit_msgs::PlanningScene planning_scene_msg;
-    moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
     ArmController::addCollisionObjectToScene(robot_table_obj, planning_scene_msg);
-    ArmController::addCollisionObjectToScene(cube_obj, planning_scene_msg);
-    ArmController::addCollisionObjectToScene1(cube_obj, planning_scene_interface);
-    // ArmController::addCollisionObjectToScene(wall_left_obj, planning_scene_msg);
-    // ArmController::addCollisionObjectToScene(wall_front_obj, planning_scene_msg);
-    // ArmController::addCollisionObjectToScene(wall_right_obj, planning_scene_msg);
 
     planning_scene_msg.is_diff = true;
     ros::Rate loop_rate(100);
