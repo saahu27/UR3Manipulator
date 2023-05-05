@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>ur3e_trajectory</name>
+    <version>0.0.0</version>
+    <description>ur3e trajectory</description>
+
+    <!-- One maintainer tag required, multiple allowed, one person per tag -->
+    <maintainer email="rutvik08@umd.edu">Rutvik Kevadiya</maintainer>
+    <maintainer email="sahruday@umd.edu">Sahruday Patti</maintainer>
+
+    <!-- One license tag required, multiple allowed, one license per tag -->
+    <license>GPLv3</license>
+
+    <!-- Author tags are optional, multiple are allowed, one per tag -->
+    <author email="rutvik08@umd.edu">Rutvik Kevadiya</author>
+    <author email="sahruday@umd.edu">Sahruday Patti</author>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <build_depend>roscpp</build_depend>
+    <build_depend>rospy</build_depend>
+    <build_depend>moveit_wrapper</build_depend>    
+
+    <exec_depend>roscpp</exec_depend>
+    <exec_depend>rospy</exec_depend>
+    <exec_depend>moveit_wrapper</exec_depend>
+</package>

@@ -1,0 +1,3 @@
+<launch>
+    <rosparam  file="$(find ur3e_trajectory)/config/params.yaml" command="load" />
+</launch>
